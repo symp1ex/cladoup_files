@@ -1,0 +1,8 @@
+{
+    "silence_mode": false,
+    "language": "ru",
+    "source_path": "C:\\",
+    "destination_path": "D:\\",
+    "interval": 600,
+    "max_copies": 5
+}
