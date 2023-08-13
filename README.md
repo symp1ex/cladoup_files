@@ -7,11 +7,9 @@ When the number of copies made reaches the value specified in "max_copies", the 
 Works in two modes:
 1. Parameters for copying can be registered in the console window. Paths entered manually in the console window are separated by '\\\'.
 2. Can be loaded from config.json. The paths specified in config.json must be separated by '\\\\'. 
-If 
-"silence_mode": true 
-in config.json, then the program runs in the background and the start of the copy process does not require additional confirmation from the user after starting the program, and all output occurs in log.txt.
+If '"silence_mode": true' in config.json, then the program runs in the background and the start of the copy process does not require additional confirmation from the user after starting the program, and all output occurs in log.txt.
 
 If you run several parallel processes of copying different files, then it is better to specify folders with different names along the save path, in order to avoid errors associated with creating folders with the same names inside the current timestamp.
 
-"language": "en" - English (Google Translate)
+"language": "en" - English (Google Translate)\n
 "language": "ru" - Russian language.
