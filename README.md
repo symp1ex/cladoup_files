@@ -5,7 +5,7 @@ The program takes as arguments: the path to the folder\files to copy "source_pat
 When the number of copies made reaches the value specified in "max_copies", the program starts deleting the oldest copy each time a new copy is create. Copies are added to the specified path with the creation inside a folder named as the current timestamp.
 
 Works in two modes:
-1. Parameters for copying can be registered in the console window. Paths entered manually in the console window are separated by '\\\'.
+1. Parameters for copying can be registered in the gui. Paths entered manually in the gui are separated by '\\\'.
 2. Can be loaded from config.json. The paths specified in config.json must be separated by '\\\\'. 
 If '"silence_mode": true' in config.json, then the program runs in the background and the start of the copy process does not require additional confirmation from the user after starting the program, and all output occurs in log.txt.
 
