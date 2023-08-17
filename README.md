@@ -12,3 +12,5 @@ If you run several parallel processes of copying different files, then it is bet
 
 "language": "en" - English (Google Translate)
 "language": "ru" - Russian language.
+
+*To work on Windows 7, you may need to install security update KB3063858. For the 32-bit version, the offline installer is in the archive.
