@@ -1,4 +1,4 @@
-#1.2.6b
+#1.3.1
 import os
 import shutil
 import time
@@ -52,7 +52,10 @@ class TranslationProvider:
                 "Select folder as object": "Выбрать папку как объект",
                 "Settings": "Настройки",
                 "Language": "Язык",
-                "Create New \'Config.json\'": "Создать новый \'Config.json\'",
+                "Open save folder": "Открыть папку сохранения",
+                "for manual mode": "для ручного режима",
+                "for auto mode": "для авто-режима",
+                "Create new \'config.json\'": "Создать новый \'config.json\'",
                 "About": "О программе"
             },
             "path_dialog": {
@@ -125,12 +128,17 @@ class Ui_MainWindow(object):
         event.accept()
 
     def setupUi(self, MainWindow):
+        icon_data = b"\x00\x00\x01\x00\x01\x00  \x00\x00\x01\x00 \x00\xa8\x10\x00\x00\x16\x00\x00\x00(\x00\x00\x00 \x00\x00\x00@\x00\x00\x00\x01\x00 \x00\x00\x00\x00\x00\x80\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x006/-\x0450,k4/)\xcd40+\xfc30+\xff3/*\xff3/*\xff3/*\xff2/*\xff2.*\xff2/*\xff2/*\xff2/*\xff2/*\xff2.*\xff2/*\xff2/+\xff2/+\xff2/+\xff2/+\xff30+\xff30,\xff3/+\xff3/+\xff3/+\xff2/*\xff2/*\xf93.*\xd05/+u4/*\x07\x00\x00\x00\x007/.\x056/,\xb8:9[\xff@D\x95\xffAF\xa3\xffAF\xa5\xffAF\xa5\xffAG\xa5\xffAF\xa4\xffAG\xa4\xffAF\xa4\xffAF\xa5\xffAF\xa5\xffAF\xa5\xffAF\xa4\xffAF\xa4\xffAF\xa5\xffAF\xa4\xff@E\xa4\xffAF\xa5\xffAF\xa5\xffAF\xa5\xffBG\xa4\xffAF\xa5\xffAG\xa5\xffAH\xa6\xffAG\xa7\xffAF\xa4\xff?D\x95\xff89`\xff3/+\xc840(\n6/-n;:Z\xffCJ\xa9\xffBI\xa7\xffBH\xa7\xffAH\xa6\xffAH\xa7\xffAH\xa7\xffBG\xa7\xffBH\xa7\xffBH\xa6\xffBG\xa7\xffAH\xa7\xffBG\xa8\xffBH\xa7\xffBH\xa7\xffBH\xa8\xffAG\xa8\xffBG\xa8\xffBH\xa8\xffBH\xa7\xffBH\xa7\xffBH\xa7\xffBH\xa8\xffBH\xa7\xffBI\xa7\xffBI\xa8\xffBH\xa7\xffBG\xa7\xffCH\xa8\xff:9`\xff50)\x836/*\xd5AF\x94\xffBJ\xa8\xffAI\xa6\xffBH\xa7\xffBI\xa6\xffAH\xa6\xffAH\xa7\xffAH\xa7\xffBH\xa7\xffBI\xa6\xffAH\xa6\xffBH\xa7\xffBI\xa8\xffBI\xa8\xffBI\xa7\xffBI\xa6\xffBH\xa7\xffBH\xa8\xffCI\xa8\xffBI\xa7\xffBH\xa6\xffBH\xa7\xffBH\xa7\xffBH\xa7\xffBI\xa6\xffBI\xa7\xffBI\xa8\xffBI\xa8\xffBH\xa7\xffBE\x9b\xff4/)\xe05/*\xfeAH\xa3\xffAI\xa7\xffAI\xa7\xffAH\xa6\xffBH\xa7\xffBI\xa7\xffAH\xa6\xffAH\xa7\xffBI\xa7\xffBH\xa7\xffAH\xa6\xffAH\xa6\xffBI\xa7\xffBI\xa7\xffBH\xa7\xffAH\xa6\xffBH\xa6\xffBH\xa7\xffAH\xa6\xffBH\xa6\xffAH\xa6\xffAH\xa5\xffAH\xa6\xffAH\xa6\xffBH\xa7\xffBI\xa7\xffBI\xa7\xffBI\xa8\xffBH\xa7\xffCG\xa8\xff2.*\xfe4/)\xffBH\xa3\xffBI\xa6\xffAI\xa6\xffBI\xa7\xffAH\xa7\xffBH\xa7\xffBH\xa6\xffAH\xa6\xffBH\xa7\xffAH\xa7\xffAG\xa6\xffAH\xa5\xffAH\xa5\xffBH\xa6\xffAH\xa6\xffAG\xa6\xffAH\xa5\xffAH\xa4\xffAH\xa5\xffAH\xa5\xffAG\xa6\xffAH\xa5\xffAH\xa5\xffAH\xa7\xffAH\xa6\xffAH\xa7\xffAH\xa6\xffBH\xa6\xffBH\xa7\xffBF\xa7\xff1.+\xff4/)\xffBH\xa4\xffBI\xa7\xffAI\xa6\xffAH\xa6\xffAH\xa7\xffBH\xa7\xffBH\xa7\xffAH\xa6\xffAH\xa6\xffAG\xa6\xffAG\xa5\xffAG\xa5\xffAG\xa5\xffBH\xa6\xffBG\xa6\xffAG\xa5\xffAG\xa6\xffAG\xa5\xffAH\xa4\xffAG\xa5\xff@G\xa4\xff@G\xa5\xffAH\xa5\xffAH\xa5\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAG\xa6\xffBF\xa7\xff2.+\xff4/)\xffBI\xa4\xffBI\xa7\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAH\xa7\xffAG\xa6\xff@G\xa6\xff@G\xa5\xffAG\xa4\xffAG\xa5\xffBG\xa2\xff?>w\xff??x\xff??x\xff??x\xff??x\xff>?x\xffAH\xa2\xff@G\xa4\xff@G\xa4\xff@G\xa4\xff@G\xa5\xff@G\xa4\xffAG\xa4\xffAH\xa6\xff@H\xa7\xffAH\xa6\xffAH\xa6\xffBF\xa7\xff2.+\xff5/)\xffBI\xa4\xffBI\xa7\xffAH\xa6\xffAH\xa7\xffAH\xa6\xffAH\xa6\xffAG\xa6\xffAF\xa5\xffAG\xa4\xffAG\xa4\xffAG\xa5\xff@F\xa0\xff70(\xff70(\xff71)\xff71(\xff70(\xff6/'\xffBF\x9b\xffAH\xa5\xffBG\xa4\xffBG\xa5\xffAH\xa5\xff@G\xa4\xff@G\xa3\xffAH\xa5\xffAH\xa7\xff@H\xa6\xffAG\xa7\xffBF\xa8\xff1.+\xff5/)\xffBH\xa3\xffAH\xa6\xffAH\xa7\xffAH\xa7\xffAG\xa7\xffBG\xa6\xff97Q\xff5/*\xff6/)\xff71,\xff\x9a\x8ew\xff\xdc\xcd\xb0\xff\xe2\xd4\xb6\xff\xe1\xd4\xb5\xff\xe2\xd4\xb5\xff\xe0\xd2\xb3\xff\xe0\xd3\xb4\xff\xe0\xd2\xb3\xff\xe2\xd3\xb6\xff\xe3\xd4\xb6\xff\xdf\xd1\xb6\xff\xd7\xcb\xb7\xff\x85\x82\xa8\xffBH\xa5\xffAH\xa4\xffAH\xa4\xffAH\xa5\xffAH\xa7\xffAG\xa7\xffBF\xa8\xff1.*\xff4/)\xffBH\xa3\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAG\xa6\xffAF\xa6\xff402\xff\xd8\xcd\xaf\xff\x92\x88r\xff5/*\xff60+\xff60,\xff61,\xff61,\xff60,\xff60,\xff50+\xff60+\xff60,\xff61,\xff60,\xff50+\xff60*\xff94A\xffBI\xa6\xffBI\xa5\xffAI\xa6\xffAH\xa6\xffAH\xa6\xffBF\xa7\xff2.+\xff4/)\xffBH\xa4\xffBI\xa7\xffBI\xa6\xffBI\xa6\xffBH\xa6\xffAE\xa5\xff501\xff\xda\xcf\xb0\xff\x92\x87r\xff\x86}i\xff\xf2\xe7\xc0\xff\xf1\xe4\xbd\xff\xf1\xe5\xc1\xff\xf1\xe4\xc2\xff\xf0\xe3\xc0\xff\xf0\xe3\xbf\xff\xf0\xe3\xbe\xff\xf1\xe4\xbf\xff\xf2\xe6\xc0\xff\xf1\xe4\xc0\xff\x96\x8bv\xff\x81yg\xff\xee\xe2\xbd\xff7/)\xffAH\xa4\xffAI\xa6\xffAH\xa6\xffAH\xa6\xffAG\xa5\xffAF\xa6\xff2.*\xff4/)\xffBH\xa3\xffBI\xa7\xffBI\xa7\xffBI\xa7\xffAH\xa5\xff@E\xa5\xff501\xff\xda\xce\xaf\xff\x92\x87q\xff\x86}j\xff\xf4\xe8\xc2\xff\xf4\xe8\xc4\xff\xf4\xe7\xc4\xff\xf3\xe6\xc5\xff\xf3\xd0\x9f\xff\xf2\xe3\xbe\xff\xf3\xe6\xc3\xff\xf4\xe8\xc3\xff\xf4\xe7\xc4\xff\xf3\xe6\xc4\xff\x97\x8bw\xff\x83zh\xff\xf1\xe4\xc1\xff7/)\xffBH\xa5\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAG\xa5\xffAE\xa6\xff1.+\xff4/(\xffBH\xa4\xffBH\xa7\xffBH\xa7\xffBH\xa7\xffAG\xa6\xff@E\xa5\xff501\xff\xd9\xce\xae\xff\x92\x87q\xff\x84{h\xff\xf4\xe8\xc3\xff\xf4\xe7\xc3\xff\xf4\xe7\xc4\xff\xf3\xe3\xbd\xff\xf0\x8c.\xff\xee\x9eE\xff\xf3\xe4\xbc\xff\xf3\xe7\xc3\xff\xf4\xe7\xc3\xff\xf3\xe6\xc4\xff\x96\x8bv\xff\x83zh\xff\xf0\xe3\xc0\xff7/(\xffAH\xa5\xffAH\xa6\xffAH\xa7\xffAH\xa6\xffAG\xa7\xffAE\xa6\xff1.+\xff4/)\xffBH\xa3\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAG\xa6\xff@E\xa5\xff501\xff\xd9\xcd\xae\xff\x93\x88r\xff\x85{h\xff\xf4\xe7\xc3\xff\xf4\xe7\xc2\xff\xf3\xdd\xb2\xff\xf0\x96>\xff\xf1\xaaZ\xff\xeb\x85\x1f\xff\xed\x932\xff\xf1\xd9\xa8\xff\xf4\xe7\xc2\xff\xf3\xe6\xc4\xff\x96\x8bw\xff\x83zh\xff\xef\xe3\xc0\xff6/(\xffBH\xa5\xffBI\xa6\xffAH\xa6\xffAH\xa7\xff@G\xa6\xffAF\xa7\xff2.*\xff5/)\xffCI\xa4\xffBI\xa6\xffAH\xa5\xffAH\xa6\xffAG\xa5\xff@E\xa5\xff612\xff\xd9\xcd\xad\xff\x94\x88r\xff\x85{h\xff\xf1\xd7\xa5\xff\xee\xac^\xff\xef\x8f)\xff\xf4\xc5\x83\xff\xf2\xaaY\xff\xef\x8a#\xff\xef\xa5Q\xff\xeb\x82\x17\xff\xf0\xa3O\xff\xf2\xd4\xa3\xff\x96\x8cx\xff\x84{h\xff\xef\xe3\xc0\xff6/)\xffAH\xa5\xffBH\xa7\xffAH\xa6\xffAH\xa6\xffAG\xa6\xffAF\xa6\xff2.+\xff5/)\xffBI\xa4\xffBH\xa7\xffAH\xa6\xffAH\xa6\xffAH\xa5\xffAE\xa4\xff712\xff\xd8\xcc\xad\xff\x93\x88r\xff\x85|j\xff\xf4\xe7\xc1\xff\xf0\xb7n\xff\xed\x83\x17\xff\xef\x81\x15\xff\xf0\xabX\xff\xf4\xc8\x88\xff\xf6\xd9\xa2\xff\xef\x99@\xff\xee\x97B\xff\xf4\xe0\xb8\xff\x96\x8bx\xff\x85{h\xff\xef\xe3\xc1\xff6/(\xffAH\xa5\xffAI\xa7\xffAH\xa7\xffAH\xa7\xffAH\xa6\xffAF\xa6\xff2.+\xff4/)\xffBH\xa4\xffAI\xa7\xffAH\xa6\xffAH\xa6\xffAH\xa5\xffAE\xa5\xff602\xff\xd8\xcc\xad\xff\x93\x88r\xff\x87}k\xff\xf4\xe8\xc5\xff\xf4\xe9\xc6\xff\xf5\xe3\xba\xff\xf0\xaf`\xff\xee\x89!\xff\xf2\xb0a\xff\xf4\xa9P\xff\xf3\xc5\x87\xff\xf5\xe8\xc5\xff\xf3\xe7\xc7\xff\x97\x8cy\xff\x82yg\xff\xef\xe3\xc1\xff6/(\xffAH\xa6\xffBI\xa7\xffAH\xa7\xffAH\xa7\xffAG\xa6\xffAF\xa6\xff2.+\xff4/)\xffBH\xa4\xffBH\xa7\xffAH\xa6\xffBH\xa7\xffAH\xa6\xffAF\xa5\xff601\xff\xd8\xcc\xad\xff\x94\x89r\xff\x85|i\xff\xf4\xe8\xc3\xff\xf4\xe7\xc3\xff\xf3\xe7\xc5\xff\xf4\xe7\xc4\xff\xf3\xdf\xb6\xff\xf4\xd2\x9e\xff\xf5\xe7\xc3\xff\xf4\xe7\xc5\xff\xf3\xe7\xc4\xff\xf2\xe6\xc6\xff\x96\x8bx\xff\x82zg\xff\xef\xe2\xc0\xff7/(\xffAH\xa5\xffBI\xa7\xffBH\xa7\xffAH\xa7\xffAG\xa6\xffAE\xa6\xff2/+\xff5/)\xffAH\xa4\xffAH\xa7\xffAH\xa7\xffAH\xa7\xffAH\xa6\xff@E\xa6\xff602\xff\xd9\xcd\xad\xff\x94\x89s\xff\x82xe\xff\xea\xdd\xb7\xff\xea\xdd\xb8\xff\xe9\xdc\xb8\xff\xe9\xdb\xb9\xff\xe8\xdc\xba\xff\xe8\xdb\xba\xff\xe8\xdb\xb9\xff\xe8\xdb\xb9\xff\xe8\xdb\xb9\xff\xe9\xdd\xbb\xff\x90\x86s\xff\x8cg9\xff\xf1\xe4\xc3\xff7/'\xffBI\xa6\xffBI\xa7\xffBI\xa6\xffBI\xa7\xffAH\xa6\xffAF\xa7\xff2.+\xff5/)\xffBH\xa3\xffAH\xa7\xffAH\xa6\xffAH\xa7\xffAG\xa6\xff@E\xa5\xff603\xff\xd9\xcd\xac\xff\xbf\xb3\x97\xff=60\xff60,\xff70,\xff60,\xff60+\xff6/,\xff60,\xff60,\xff60,\xff70,\xff60,\xff;60\xff\xc6u\x19\xff\xf1\xe5\xc3\xff7/)\xffBI\xa6\xffBI\xa7\xffBI\xa6\xffAH\xa6\xffAH\xa6\xffBF\xa7\xff2.+\xff5/)\xffBH\xa3\xffBH\xa7\xffBI\xa7\xffAH\xa6\xffAG\xa5\xff@E\xa5\xff502\xff\xcf\xc3\xa5\xff\xe5\xd8\xb6\xff\xe5\xd8\xb7\xff\xe5\xd7\xb6\xff\xe4\xd6\xb5\xff\xe3\xd5\xb3\xff\xe3\xd5\xb3\xff\xe3\xd5\xb3\xff\xe4\xd6\xb4\xff\xe4\xd6\xb4\xff\xe4\xd6\xb4\xff\xe4\xd6\xb5\xff\xe3\xd5\xb4\xff\xe6\xd7\xb5\xff\xe5\xca\x9c\xff\xe5\xd8\xb7\xff6/+\xffBJ\xa7\xffAI\xa7\xffBI\xa6\xffAI\xa6\xffAH\xa6\xffBF\xa7\xff1.*\xff4/)\xffBH\xa2\xffAH\xa6\xffAH\xa6\xffAI\xa6\xffAH\xa5\xffBG\xa6\xff97V\xff501\xff500\xff400\xff400\xff500\xff500\xff510\xff500\xff511\xff500\xff500\xff511\xff510\xff511\xff50/\xff500\xff:7N\xffBJ\xa7\xffAI\xa7\xffAI\xa7\xffBI\xa7\xffAH\xa7\xffBF\xa7\xff1.*\xff4/)\xffBH\xa4\xffAH\xa7\xff@H\xa6\xffAH\xa7\xffAH\xa6\xffAH\xa6\xffCI\xa8\xffCI\xaa\xffCH\xaa\xffBG\xaa\xffBG\xaa\xffBG\xab\xffAF\xab\xffBF\xaa\xffBG\xab\xffBG\xab\xffCG\xab\xffBG\xaa\xffBG\xaa\xffBG\xab\xffBH\xab\xffBH\xaa\xffBH\xaa\xffBH\xa8\xffAI\xa6\xffAI\xa6\xffAH\xa7\xffAH\xa7\xffAH\xa7\xffBF\xa7\xff2.+\xff5/)\xffAG\xa3\xffAH\xa6\xffAH\xa7\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffBH\xa6\xffBI\xa7\xffBH\xa7\xffBH\xa7\xffBI\xa7\xffBH\xa6\xffAG\xa7\xffAG\xa6\xffAG\xa7\xffBH\xa7\xffBH\xa7\xffBH\xa7\xffAH\xa7\xffBG\xa7\xffBH\xa7\xffBH\xa7\xffAH\xa7\xffAH\xa6\xffAH\xa7\xffAI\xa6\xffAH\xa5\xffAH\xa6\xffAG\xa6\xffBF\xa7\xff2.+\xff4/(\xffAG\xa2\xff@G\xa5\xff@H\xa5\xffAH\xa6\xff@H\xa5\xffAG\xa5\xff@H\xa5\xffAH\xa5\xffAH\xa6\xffAH\xa6\xffAH\xa6\xffAH\xa5\xff@G\xa5\xff@G\xa5\xff@G\xa5\xffAH\xa6\xffAH\xa5\xffAH\xa5\xffAG\xa6\xff@G\xa6\xffAG\xa6\xff@H\xa5\xff@H\xa4\xff@H\xa6\xff@H\xa6\xffAH\xa6\xffAH\xa5\xffAH\xa5\xffAH\xa5\xffAF\xa6\xff2.*\xff4.'\xffBG\xa2\xffAH\xa4\xffAH\xa4\xffAH\xa4\xffAG\xa4\xffAH\xa3\xffAH\xa3\xffAG\xa3\xffAG\xa3\xffAG\xa4\xffAH\xa4\xffAG\xa3\xffAG\xa3\xffAG\xa3\xffAG\xa4\xffAH\xa4\xffAH\xa3\xffAH\xa3\xffAG\xa4\xffAG\xa4\xffAG\xa3\xffAG\xa3\xffAH\xa2\xffAH\xa3\xffAH\xa4\xffAH\xa4\xffAG\xa4\xffAH\xa4\xffBH\xa4\xffAF\xa5\xff2.*\xff5/(\xfa}\x80\xdc\xff\x80\x84\xe4\xff\x7f\x82\xe4\xff~\x82\xe4\xff\x7f\x83\xe5\xff~\x82\xe5\xff\x7f\x83\xe5\xff\x7f\x82\xe5\xff\x7f\x82\xe5\xff\x80\x83\xe5\xff~\x82\xe5\xff\x7f\x83\xe5\xff\x7f\x82\xe4\xff~\x82\xe4\xff\x80\x83\xe5\xff\x7f\x83\xe5\xff\x80\x84\xe5\xff\x7f\x83\xe5\xff~\x82\xe4\xff\x7f\x83\xe4\xff~\x82\xe5\xff\x7f\x83\xe4\xff\x7f\x82\xe4\xff~\x82\xe3\xff~\x82\xe4\xff~\x82\xe5\xff\x7f\x83\xe5\xff\x7f\x83\xe4\xff\x7f\x83\xe4\xff\x7f\x83\xe5\xff3.*\xfd4.)\xd3}~\xcb\xff\x8e\x91\xf1\xff\x8d\x90\xf1\xff\x8d\x8f\xf1\xff\x8d\x90\xf2\xff\x8d\x8f\xf3\xff\x8d\x90\xf2\xff\x8d\x8f\xf2\xff\x8d\x8f\xf2\xff\x8d\x90\xf2\xff\x8d\x8f\xf2\xff\x8d\x90\xf1\xff\x8d\x90\xf2\xff\x8e\x90\xf2\xff\x8e\x91\xf2\xff\x8d\x8f\xf2\xff\x8d\x90\xf1\xff\x8d\x90\xf2\xff\x8d\x90\xf2\xff\x8e\x91\xf2\xff\x8d\x90\xf2\xff\x8e\x90\xf2\xff\x8d\x90\xf1\xff\x8d\x8f\xf1\xff\x8d\x90\xf1\xff\x8d\x8f\xf1\xff\x8e\x91\xf1\xff\x8e\x91\xf1\xff\x8d\x8f\xf0\xff~\x81\xd3\xff60)\xd650*vQMi\xff\x8d\x8f\xef\xff\x8d\x90\xf1\xff\x8d\x8f\xf2\xff\x8d\x90\xf2\xff\x8d\x90\xf2\xff\x8d\x90\xf2\xff\x8e\x90\xf2\xff\x8d\x90\xf2\xff\x8e\x90\xf2\xff\x8e\x91\xf1\xff\x8e\x91\xf1\xff\x8e\x91\xf2\xff\x8e\x90\xf2\xff\x8e\x90\xf2\xff\x8d\x90\xf1\xff\x8d\x8f\xf2\xff\x8d\x90\xf2\xff\x8d\x90\xf2\xff\x8d\x90\xf2\xff\x8d\x90\xf2\xff\x8e\x90\xf2\xff\x8e\x91\xf2\xff\x8d\x90\xf2\xff\x8d\x90\xf1\xff\x8e\x91\xf1\xff\x8e\x90\xf1\xff\x8f\x90\xf0\xff\x8d\x91\xf0\xffTQp\xff71+{3.(\x043.*\xaeNJe\xffxw\xc1\xff\x82\x82\xdc\xff\x82\x82\xdc\xff\x83\x83\xdc\xff\x81\x82\xdc\xff\x82\x82\xdc\xff\x82\x82\xdd\xff\x82\x82\xdc\xff\x83\x83\xdc\xff\x82\x82\xdb\xff\x82\x83\xdc\xff\x82\x82\xdc\xff\x82\x82\xdc\xff\x82\x82\xdc\xff\x81\x81\xdb\xff\x82\x82\xdc\xff\x82\x82\xdd\xff\x82\x82\xdc\xff\x82\x82\xdc\xff\x82\x82\xdc\xff\x83\x83\xdd\xff\x82\x82\xdd\xff\x81\x82\xdc\xff\x82\x83\xdb\xff\x82\x83\xdc\xffzz\xc5\xffROm\xff81.\xb8;5.\x06\x00\x00\x00\x001-)\x012-*Z3.)\xbf2.'\xeb2-'\xef1-&\xee2-&\xef1-&\xeb2-&\xe62.&\xee2-&\xef2-&\xef1-&\xef1-&\xee2-&\xef1-&\xef2-&\xef1-&\xef1-&\xef1-&\xef1-%\xef1-&\xef1-&\xef1-&\xef1-&\xef0,'\xef1-)\xee5/+\xc491.e91.\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
         self.MainWindow = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
         MainWindow.resize(522, 680)
         MainWindow.setMinimumSize(QtCore.QSize(521, 665))
         MainWindow.setMaximumSize(QtCore.QSize(521, 665))
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(icon_data)
+        MainWindow.setWindowIcon(QtGui.QIcon(pixmap))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
@@ -157,7 +165,7 @@ class Ui_MainWindow(object):
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_4.clicked.connect(os._exit)
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(10, 591, 82, 31))
+        self.pushButton_5.setGeometry(QtCore.QRect(9, 591, 82, 31))
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_5.clicked.connect(self.stop_copying)
         self.spinBox = QtWidgets.QSpinBox(self.centralwidget)
@@ -235,23 +243,37 @@ class Ui_MainWindow(object):
         self.menuLanguage = QtWidgets.QMenu(self.menuSettings)
         self.menuLanguage.setObjectName("menuLanguage")
         MainWindow.setMenuBar(self.menuBar)
+        self.menu_open_folder = QtWidgets.QMenu(self.menuSettings)
+        self.menu_open_folder.setObjectName("open_folder")
+        MainWindow.setMenuBar(self.menuBar)
         self.actionCreate_New_Config_json = QtWidgets.QAction(MainWindow)
         self.actionCreate_New_Config_json.setObjectName("actionCreate_New_Config_json")
         self.actionCreate_New_Config_json.triggered.connect(lambda: self.create_new_config("en"))
+        self.action_open_ui_folder = QtWidgets.QAction(MainWindow)
+        self.action_open_ui_folder.setObjectName("action_open_ui_folder")
+        self.action_open_ui_folder.triggered.connect(self.open_output_folder_ui)
+        self.action_open_config_folder = QtWidgets.QAction(MainWindow)
+        self.action_open_config_folder.setObjectName("action_open_config_folder")
+        self.action_open_config_folder.triggered.connect(self.open_output_folder_config)
         self.actionAbout = QtWidgets.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
         self.actionEnglish = QtWidgets.QAction(MainWindow)
+        self.actionEnglish.setCheckable(True)
         self.actionEnglish.setObjectName("actionEnglish")
         self.actionRussian = QtWidgets.QAction(MainWindow)
+        self.actionRussian.setCheckable(True)
         self.actionRussian.setObjectName("actionRussian")
         # Связывание действий с функцией изменения языка
         self.actionEnglish.triggered.connect(lambda: self.change_language("en"))
         self.actionRussian.triggered.connect(lambda: self.change_language("ru"))
+        self.menu_open_folder.addAction(self.action_open_ui_folder)
+        self.menu_open_folder.addAction(self.action_open_config_folder)
+        self.menuSettings.addAction(self.actionCreate_New_Config_json)
+        self.menuSettings.addAction(self.menu_open_folder.menuAction())
+        self.menuSettings.addSeparator()
         self.menuLanguage.addAction(self.actionEnglish)
         self.menuLanguage.addAction(self.actionRussian)
         self.menuSettings.addAction(self.menuLanguage.menuAction())
-        self.menuSettings.addSeparator()
-        self.menuSettings.addAction(self.actionCreate_New_Config_json)
         self.menuSettings.addSeparator()
         self.menuSettings.addAction(self.actionAbout)
         self.menuBar.addAction(self.menuSettings.menuAction())
@@ -288,6 +310,13 @@ class Ui_MainWindow(object):
             self.create_config_file(config)
         else:
             self.create_new_config(lang)
+
+        if lang == "ru":
+            self.actionEnglish.setChecked(False)
+            self.actionRussian.setChecked(True)
+        else:
+            self.actionEnglish.setChecked(True)
+            self.actionRussian.setChecked(False)
         # Обновление текущего перевода
         self.retranslateUi(self.MainWindow)
 
@@ -308,7 +337,10 @@ class Ui_MainWindow(object):
         self.radioButton.setText(_translate("MainWindow", "Select folder as object"))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
         self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
-        self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create New \'Config.json\'"))
+        self.action_open_ui_folder.setText(_translate("MainWindow", "for manual mode"))
+        self.action_open_config_folder.setText(_translate("MainWindow", "for auto mode"))
+        self.menu_open_folder.setTitle(_translate("MainWindow", "Open save folder"))
+        self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create new \'config.json\'"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionEnglish.setText("English")
         self.actionRussian.setText("Русский")
@@ -333,7 +365,7 @@ class Ui_MainWindow(object):
 
     def write_to_log_file(self, message):
         log_file_path = get_log_file_path()
-        with open(log_file_path, "a") as log_file:
+        with open(log_file_path, "a", encoding="cp1251") as log_file:
             log_file.write(message + "\n")
 
     def message(self, message):
@@ -351,84 +383,109 @@ class Ui_MainWindow(object):
         self.update_text_browser(f"\n{timestamp} {message}")
         self.write_to_log_file(f"\n{timestamp} {message}")
 
+    def open_output_folder_ui(self):
+        try:
+            path = self.lineEdit_2.text()
+            os.startfile(path)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
+    def open_output_folder_config(self):
+        try:
+            config = read_config_from_json(json_file)
+            path = config.get("destination_path")
+            os.startfile(path)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
     def on_toolButton_clicked(self):
-        if self.radioButton.isChecked():
-            self.open_source_path_dialog_folder()
-        else:
-            self.open_source_path_dialog_file()
+        try:
+            if self.radioButton.isChecked():
+                self.open_source_path_dialog_folder()
+            else:
+                self.open_source_path_dialog_file()
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def auto_button_click(self):
-        self.stop_copying()
-        if self.checkBox.isChecked():
-            self.copy_is_silence()
-            self.hide_main_window()
-        else:
-            self.copy_is_auto()
+        try:
+            self.stop_copying()
+            if self.checkBox.isChecked():
+                self.copy_is_silence()
+                self.hide_main_window()
+            else:
+                self.copy_is_auto()
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def open_source_path_dialog_file(self):
         _translate = read_config_translate()
-        options = QtWidgets.QFileDialog.Options()
-        source_path, _ = QtWidgets.QFileDialog.getOpenFileName(None, _translate("path_dialog", "Select Source File"), "", _translate("path_dialog", "All Files (*)"),
-                                                               options=options)
-        if source_path:
-            source_path = source_path.replace("/", "\\")
-            self.lineEdit.setText(source_path)
+        try:
+            options = QtWidgets.QFileDialog.Options()
+            source_path, _ = QtWidgets.QFileDialog.getOpenFileName(None, _translate("path_dialog", "Select Source File"), "", _translate("path_dialog", "All Files (*)"),
+                                                                   options=options)
+            if source_path:
+                source_path = source_path.replace("/", "\\")
+                self.lineEdit.setText(source_path)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def open_source_path_dialog_folder(self):
         _translate = read_config_translate()
-        options = QtWidgets.QFileDialog.Options()
-        source_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog", "Select Source Path"), "", options=options)
-        if source_path:
-            source_path = source_path.replace("/", "\\")
-            self.lineEdit.setText(source_path)
+        try:
+            options = QtWidgets.QFileDialog.Options()
+            source_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog", "Select Source Path"), "", options=options)
+            if source_path:
+                source_path = source_path.replace("/", "\\")
+                self.lineEdit.setText(source_path)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def open_destination_path_dialog(self):
         _translate = read_config_translate()
-        options = QtWidgets.QFileDialog.Options()
-        destination_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog", "Select Destination Path"), "",
-                                                                      options=options)
-        if destination_path:
-            destination_path = destination_path.replace("/", "\\")
-            self.lineEdit_2.setText(destination_path)
-
-    def get_source_path_from_field(self):
-        source_path = self.lineEdit.text()
-        return source_path
-
-    def get_destination_path_from_field(self):
-        destination_path = self.lineEdit_2.text()
-        return destination_path
+        try:
+            options = QtWidgets.QFileDialog.Options()
+            destination_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog", "Select Destination Path"), "",
+                                                                          options=options)
+            if destination_path:
+                destination_path = destination_path.replace("/", "\\")
+                self.lineEdit_2.setText(destination_path)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def start_button_click(self):
         self.stop_copying()
         self.copy_thread_stop_event = threading.Event()
         _translate = read_config_translate()
 
-        source_path = self.validate_path_source_for_ui(self.get_source_path_from_field())
-        if source_path:
-            destination_path = self.validate_path_destination_for_ui(self.get_destination_path_from_field(), source_path)
-        interval = self.validate_positive_integer_for_ui(self.spinBox_2.value(), "interval")
-        max_copies = self.validate_positive_integer_for_ui(self.spinBox.value(), "max_copies")
+        try:
+            source_path = self.validate_path_source_for_ui(self.lineEdit.text())
+            if source_path:
+                destination_path = self.validate_path_destination_for_ui(self.lineEdit_2.text(), source_path)
+            interval = self.validate_positive_integer_for_ui(self.spinBox_2.value(), "interval")
+            max_copies = self.validate_positive_integer_for_ui(self.spinBox.value(), "max_copies")
 
-        if source_path and destination_path and interval and max_copies:
-            self.message_with_timestamp_nn(
-                f"{_translate('log_message', 'The following parameters for copying have been entered manually: ')}")
-            self.message(f"{_translate('log_message', '    Source path:')} '{source_path}'")
-            self.message(f"{_translate('log_message', '    Path to save copy:')} '{destination_path}'")
-            self.message(f"{_translate('log_message', '    Copy Interval:')} {interval} {_translate('log_message', 'sec.')}")
-            self.message(f"{_translate('log_message', '    Number of copies to keep:')} {max_copies}")
+            if source_path and destination_path and interval and max_copies:
+                self.message_with_timestamp_nn(
+                    f"{_translate('log_message', 'The following parameters for copying have been entered manually: ')}")
+                self.message(f"{_translate('log_message', '    Source path:')} '{source_path}'")
+                self.message(f"{_translate('log_message', '    Path to save copy:')} '{destination_path}'")
+                self.message(f"{_translate('log_message', '    Copy Interval:')} {interval} {_translate('log_message', 'sec.')}")
+                self.message(f"{_translate('log_message', '    Number of copies to keep:')} {max_copies}")
 
-            if self.checkBox.isChecked():
-                copy_thread = threading.Thread(target=self.copy_files_silence,
-                                               args=(source_path, destination_path, interval, max_copies))
-                copy_thread.start()
-                self.hide_main_window()
+                if self.checkBox.isChecked():
+                    copy_thread = threading.Thread(target=self.copy_files_silence,
+                                                   args=(source_path, destination_path, interval, max_copies))
+                    copy_thread.start()
+                    self.hide_main_window()
+                else:
+                    copy_thread = threading.Thread(target=self.copy_files,
+                                                   args=(source_path, destination_path, interval, max_copies, self.copy_thread_stop_event))
+                    copy_thread.start()
             else:
-                copy_thread = threading.Thread(target=self.copy_files,
-                                               args=(source_path, destination_path, interval, max_copies, self.copy_thread_stop_event))
-                copy_thread.start()
-        else:
-            self.message_with_timestamp(f"{_translate('log_message', 'Select the correct settings for copying.')}")
+                self.message_with_timestamp(f"{_translate('log_message', 'Select the correct settings for copying.')}")
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     copy_thread_stop_event = threading.Event()
 
@@ -524,6 +581,10 @@ class Ui_MainWindow(object):
                 continue
         except Exception as e:
             self.exception_handler_only_log(type(e), e, e.__traceback__)
+            self.message_with_timestamp(
+                f"{_translate('log_message', 'The program has been stopped.')}")
+            os._exit(1)
+
 
     def validate_path_source_for_ui(self, path):
         _translate = read_config_translate()
@@ -666,6 +727,8 @@ class Ui_MainWindow(object):
                 os._exit(1)
         except Exception as e:
             self.exception_handler_only_log(type(e), e, e.__traceback__)
+            self.message_with_timestamp(
+                f"{_translate('log_message', 'The program has been stopped.')}")
             os._exit(1)
 
     def validate_path_destination_for_silence(self, path, source_path):
@@ -703,6 +766,8 @@ class Ui_MainWindow(object):
                     os._exit(1)
         except Exception as e:
             self.exception_handler_only_log(type(e), e, e.__traceback__)
+            self.message_with_timestamp(
+                f"{_translate('log_message', 'The program has been stopped.')}")
             os._exit(1)
 
     def validate_positive_integer_for_silence(self, value, param_name):
@@ -733,6 +798,8 @@ class Ui_MainWindow(object):
                 os._exit(1)
             except Exception as e:
                 self.exception_handler_only_log(type(e), e, e.__traceback__)
+                self.message_with_timestamp(
+                    f"{_translate('log_message', 'The program has been stopped.')}")
                 os._exit(1)
 
     def copy_is_silence(self):
@@ -773,6 +840,8 @@ class Ui_MainWindow(object):
                 os._exit(1)
         except Exception as e:
             self.exception_handler_only_log(type(e), e, e.__traceback__)
+            self.message_with_timestamp(
+                f"{_translate('log_message', 'The program has been stopped.')}")
             os._exit(1)
 
 
@@ -789,14 +858,32 @@ class AppMainWindow(QtWidgets.QMainWindow):
             elif silence_mode == False:
                 self.ui.setupUi(self)
                 self.show()
+
+                lang = config.get("language")
+                if lang == "ru":
+                    self.ui.actionEnglish.setChecked(False)
+                    self.ui.actionRussian.setChecked(True)
+                else:
+                    self.ui.actionEnglish.setChecked(True)
+                    self.ui.actionRussian.setChecked(False)
             else:
                 self.ui.setupUi(self)
                 self.show()
                 self.ui.message_with_timestamp(
                     f"{_translate('log_message', 'Error: The configuration file contains an invalid data format. You can continue manually.')}")
+
+                lang = config.get("language")
+                if lang == "ru":
+                    self.ui.actionEnglish.setChecked(False)
+                    self.ui.actionRussian.setChecked(True)
+                else:
+                    self.ui.actionEnglish.setChecked(True)
+                    self.ui.actionRussian.setChecked(False)
         else:
             self.ui.setupUi(self)
             self.show()
+            self.ui.actionEnglish.setChecked(True)
+            self.ui.actionRussian.setChecked(False)
             self.ui.message_with_timestamp(
                 f"Error: config file not found. You can continue manually.")
 
