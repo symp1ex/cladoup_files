@@ -539,13 +539,13 @@ class Ui_MainWindow(object):
 
     def copy_files_silence(self, source_path, destination_path, interval, max_copies):
         copies_info = {}  # Словарь для хранения информации о сделанных копиях
-        copy_folder_name = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
         copy_count = 1
         delete_copy_count = 1
         _translate = read_config_translate()
 
         try:
             while True:
+                copy_folder_name = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
                 copy_folder_path = os.path.join(destination_path, copy_folder_name)
                 os.makedirs(copy_folder_path)
                 copies_info[copy_folder_path] = time.time()
@@ -577,9 +577,10 @@ class Ui_MainWindow(object):
                 time.sleep(interval)
                 continue
         except Exception as e:
+            timestamp = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
             self.exception_handler_only_log(type(e), e, e.__traceback__)
             self.write_to_log_file(
-                f"[{copy_folder_name}] {_translate('log_message', 'The program has been stopped.')}")
+                f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
             os._exit(1)
 
 
