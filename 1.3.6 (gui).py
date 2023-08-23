@@ -1,4 +1,4 @@
-#1.3.2
+#1.3.6
 import os
 import shutil
 import time
@@ -156,6 +156,28 @@ class Ui_MainWindow(object):
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(10, 181, 501, 401))
         self.textBrowser.setObjectName("textBrowser")
+        self.textBrowser.setReadOnly(True)  # Отключаем возможность редактирования
+        self.textBrowser.setFocusPolicy(QtCore.Qt.NoFocus)  # Отключаем фокус
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
+        brush = QtGui.QBrush(QtGui.QColor(30, 30, 30))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Text, brush)
+        brush = QtGui.QBrush(QtGui.QColor(30, 30, 30))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
+        brush = QtGui.QBrush(QtGui.QColor(240, 240, 240))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
+        self.textBrowser.setPalette(palette)
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(440, 591, 72, 31))
         self.pushButton_4.setStyleSheet("")
@@ -319,7 +341,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = read_config_translate()
-        MainWindow.setWindowTitle("cladoup files v1.3.2")
+        MainWindow.setWindowTitle("cladoup files v1.3.6")
         self.pushButton_2.setText(_translate("MainWindow", "Auto"))
         self.pushButton_3.setText(_translate("MainWindow", "Start"))
         self.pushButton_4.setText(_translate("MainWindow", "Exit"))
@@ -358,7 +380,12 @@ class Ui_MainWindow(object):
 
     def update_text_browser(self, message):
         self.textBrowser.append(message)
+        self.textBrowser.selectAll() #выделяем весь текст для корректного обновления шрифтов
         self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
+        cursor = self.textBrowser.textCursor()
+        cursor.movePosition(cursor.End)
+        self.textBrowser.setTextCursor(cursor)
+        self.textBrowser.ensureCursorVisible()
 
     def write_to_log_file(self, message):
         log_file_path = get_log_file_path()
@@ -407,6 +434,7 @@ class Ui_MainWindow(object):
     def auto_button_click(self):
         try:
             self.stop_copying()
+            time.sleep(1)
             if self.checkBox.isChecked():
                 self.copy_is_silence()
                 self.hide_main_window()
@@ -452,6 +480,7 @@ class Ui_MainWindow(object):
 
     def start_button_click(self):
         self.stop_copying()
+        time.sleep(1)
         self.copy_thread_stop_event = threading.Event()
         _translate = read_config_translate()
 
@@ -634,22 +663,18 @@ class Ui_MainWindow(object):
 
     def validate_positive_integer_for_ui(self, value, param_name):
         _translate = read_config_translate()
-        if value == True:
+        try:
+            value = int(value)
+            if value > 0:
+                return value
+            else:
+                self.message_with_timestamp(
+                    f"{_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be a positive number.')}")
+        except ValueError:
             self.message_with_timestamp(
                 f"{_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be an integer.')}")
-        else:
-            try:
-                value = int(value)
-                if value > 0:
-                    return value
-                else:
-                    self.message_with_timestamp(
-                        f"{_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be a positive number.')}")
-            except ValueError:
-                self.message_with_timestamp(
-                    f"{_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be an integer.')}")
-            except Exception as e:
-                self.exception_handler(type(e), e, e.__traceback__)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def copy_is_auto(self):
         try:
@@ -771,34 +796,27 @@ class Ui_MainWindow(object):
     def validate_positive_integer_for_silence(self, value, param_name):
         _translate = read_config_translate()
         timestamp = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
-        if value == True:
+        try:
+            value = int(value)
+            if value > 0:
+                return value
+            else:
+                self.write_to_log_file(
+                    f"[{timestamp}] {_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be a positive number.')}")
+                self.write_to_log_file(
+                    f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
+                os._exit(1)
+        except ValueError:
             self.write_to_log_file(
                 f"[{timestamp}] {_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be an integer.')}")
             self.write_to_log_file(
                 f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
             os._exit(1)
-        else:
-            try:
-                value = int(value)
-                if value > 0:
-                    return value
-                else:
-                    self.write_to_log_file(
-                        f"[{timestamp}] {_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be a positive number.')}")
-                    self.write_to_log_file(
-                        f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
-                    os._exit(1)
-            except ValueError:
-                self.write_to_log_file(
-                    f"[{timestamp}] {_translate('log_message', 'Error:')} '{param_name}' {_translate('log_message', 'must be an integer.')}")
-                self.write_to_log_file(
-                    f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
-                os._exit(1)
-            except Exception as e:
-                self.exception_handler_only_log(type(e), e, e.__traceback__)
-                self.write_to_log_file(
-                    f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
-                os._exit(1)
+        except Exception as e:
+            self.exception_handler_only_log(type(e), e, e.__traceback__)
+            self.write_to_log_file(
+                f"[{timestamp}] {_translate('log_message', 'The program has been stopped.')}")
+            os._exit(1)
 
     def copy_is_silence(self):
         try:
