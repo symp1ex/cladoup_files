@@ -1,4 +1,4 @@
-#1.3.6
+#1.4.2
 import os
 import shutil
 import time
@@ -17,21 +17,6 @@ def read_config_from_json(json_file):
         return None
     except json.JSONDecodeError:
         return None
-
-def read_config_translate():
-    translation_provider = TranslationProvider()
-    json_file = os.path.join(os.getcwd(), "config.json")
-    config = read_config_from_json(json_file)
-    if config:
-        lang = config.get("language")
-        if lang == "ru":
-            _translate = translation_provider.translate
-        else:
-            _translate = translation_provider.original_text
-    else:
-        _translate = translation_provider.original_text
-    return _translate
-
 def get_log_file_path():
     current_dir = os.getcwd()
     return os.path.join(current_dir, "log.txt")
@@ -55,6 +40,9 @@ class TranslationProvider:
                 "Open save folder": "Открыть папку сохранения",
                 "for manual mode": "для ручного режима",
                 "for auto mode": "для авто-режима",
+                "Select another config": "Выбрать другой конфиг",
+                "Select Config File": "Выберите конфиг файл",
+                "JSON Files (*.json)": "JSON-файл (*.json)",
                 "Create new \'config.json\'": "Создать новый \'config.json\'",
                 "About": "О программе"
             },
@@ -102,7 +90,7 @@ class TranslationProvider:
                 "Error: invalid input. Repeat request.": "Ошибка: неправильный ввод. Повторите запрос.",
                 "Error: The configuration file contains an invalid data format. You can continue manually.": "Ошибка: файл конфигурации содержит неверный формат данных. Вы можете продолжить в ручном режиме.",
                 "New 'config.json' created": "Создан новый 'config.json'",
-                "Error: config file not found": "Ошибка: файл конфигурации не найден",
+                "Error: config file not found or contains an invalid data format": "Ошибка: файл конфигурации не найден или содержит неверный формат данных.",
                 "ERROR: An exception occurred": "ОШИБКА: Произошло исключение",
                 "Error: The path to the source cannot be the same as the path to save": "Ошибка: Путь до источника не может совпадать с путём для сохранения",
                 "Error: Source folder cannot be empty:": "Ошибка: Исходная папка не может быть пустой:",
@@ -140,11 +128,20 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit.setGeometry(QtCore.QRect(10, 40, 501, 21))
+        self.lineEdit.setText("C:\\")
         self.lineEdit.setObjectName("lineEdit")
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_2.setGeometry(QtCore.QRect(10, 101, 501, 21))
-        self.lineEdit_2.setText("")
+        self.lineEdit_2.setText("C:\\")
         self.lineEdit_2.setObjectName("lineEdit_2")
+        self.lineEdit_3 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_3.setGeometry(QtCore.QRect(0, 0, 0, 0))
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.lineEdit_3.setText("")
+        self.lineEdit_4 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_4.setGeometry(QtCore.QRect(0, 0, 0, 0))
+        self.lineEdit_4.setObjectName("lineEdit_4")
+        self.lineEdit_4.setText("")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(100, 591, 82, 31))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -267,7 +264,10 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menuBar)
         self.actionCreate_New_Config_json = QtWidgets.QAction(MainWindow)
         self.actionCreate_New_Config_json.setObjectName("actionCreate_New_Config_json")
-        self.actionCreate_New_Config_json.triggered.connect(lambda: self.create_new_config("en"))
+        self.actionCreate_New_Config_json.triggered.connect(lambda: self.create_new_config())
+        self.actionselect_Config_json = QtWidgets.QAction(MainWindow)
+        self.actionselect_Config_json.setObjectName("action_select_Config_json")
+        self.actionselect_Config_json.triggered.connect(self.open_config_select_dialog)
         self.action_open_ui_folder = QtWidgets.QAction(MainWindow)
         self.action_open_ui_folder.setObjectName("action_open_ui_folder")
         self.action_open_ui_folder.triggered.connect(self.open_output_folder_ui)
@@ -288,6 +288,8 @@ class Ui_MainWindow(object):
         self.menu_open_folder.addAction(self.action_open_ui_folder)
         self.menu_open_folder.addAction(self.action_open_config_folder)
         self.menuSettings.addAction(self.actionCreate_New_Config_json)
+        self.menuSettings.addAction(self.actionselect_Config_json)
+        self.menuSettings.addSeparator()
         self.menuSettings.addAction(self.menu_open_folder.menuAction())
         self.menuSettings.addSeparator()
         self.menuLanguage.addAction(self.actionEnglish)
@@ -303,45 +305,112 @@ class Ui_MainWindow(object):
     def hide_main_window(self):
         self.MainWindow.hide()
 
+    def open_config_select_dialog(self):
+        _translate = self.read_config_translate()
+        try:
+            options = QtWidgets.QFileDialog.Options()
+            options |= QtWidgets.QFileDialog.ReadOnly  # Опция "Только чтение"
+
+            json_filter = _translate("MainWindow", "JSON Files (*.json)")  # Фильтр для JSON файлов
+
+            config_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                None,
+                _translate("MainWindow", "Select Config File"),
+                "",
+                json_filter,  # Используем только фильтр JSON файлов
+                options=options
+            )
+            if config_path:
+                self.lineEdit_3.setText(config_path)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
+    def read_config_select_mode(self):
+        try:
+            config_path = self.lineEdit_3.text()
+            if config_path:
+                config = read_config_from_json(config_path)
+            else:
+                config = read_config_from_json(json_file)
+            return config
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
     def create_config_file(self, config, file_path="config.json"):
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(config, file, ensure_ascii=False, indent=4)
 
-    def create_new_config(self, lang):
-        _translate = read_config_translate()
-        config_data = {
-            "silence_mode": False,
-            "language": lang,
-            "source_path": "C:\\",
-            "destination_path": "D:\\",
-            "interval": 600,
-            "max_copies": 5
-        }
-        self.create_config_file(config_data)
-        self.message_with_timestamp(_translate("log_message", "New 'config.json' created"))
+    def create_new_config(self):
+        _translate = self.read_config_translate()
+
+        try:
+            language = self.lineEdit_4.text()
+            source_path = self.lineEdit.text()
+            destination_path = self.lineEdit_2.text()
+            interval = self.spinBox_2.value()
+            max_copies = self.spinBox.value()
+
+            config_data = {
+                "silence_mode": False,
+                "language": language,
+                "source_path": source_path,
+                "destination_path": destination_path,
+                "interval": interval,
+                "max_copies": max_copies
+            }
+            self.create_config_file(config_data)
+            self.message_with_timestamp(_translate("log_message", "New 'config.json' created"))
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def change_language(self, lang):
-        # Обновление значения языка в config.json
-        json_file = os.path.join(os.getcwd(), "config.json")
-        config = read_config_from_json(json_file)
-        if config:
-            config["language"] = lang
-            self.create_config_file(config)
-        else:
-            self.create_new_config(lang)
+        try:
+            # Обновление значения языка в config.json
+            json_file = os.path.join(os.getcwd(), "config.json")
+            config = read_config_from_json(json_file)
+            if config:
+                config["language"] = lang
+                self.create_config_file(config)
+            else:
+                lang_cfg = lang
+                self.lineEdit_4.setText(lang_cfg)
+                self.create_new_config()
 
-        if lang == "ru":
-            self.actionEnglish.setChecked(False)
-            self.actionRussian.setChecked(True)
-        else:
-            self.actionEnglish.setChecked(True)
-            self.actionRussian.setChecked(False)
-        # Обновление текущего перевода
-        self.retranslateUi(self.MainWindow)
+            if lang == "ru":
+                self.actionEnglish.setChecked(False)
+                self.actionRussian.setChecked(True)
+            else:
+                self.actionEnglish.setChecked(True)
+                self.actionRussian.setChecked(False)
+            # Обновление текущего перевода
+            self.retranslateUi(self.MainWindow)
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
+    def read_config_translate(self):
+        try:
+            translation_provider = TranslationProvider()
+            json_file = os.path.join(os.getcwd(), "config.json")
+            config = read_config_from_json(json_file)
+            if config:
+                lang = config.get("language")
+                if lang == "ru":
+                    _translate = translation_provider.translate
+                    lang_cfg = "ru"
+                    self.lineEdit_4.setText(lang_cfg)
+                else:
+                    _translate = translation_provider.original_text
+                    lang_cfg = "en"
+                    self.lineEdit_4.setText(lang_cfg)
+            else:
+                _translate = translation_provider.original_text
+            return _translate
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def retranslateUi(self, MainWindow):
-        _translate = read_config_translate()
-        MainWindow.setWindowTitle("cladoup files v1.3.6")
+        _translate = self.read_config_translate()
+        MainWindow.setWindowTitle("cladoup files v1.4.2")
         self.pushButton_2.setText(_translate("MainWindow", "Auto"))
         self.pushButton_3.setText(_translate("MainWindow", "Start"))
         self.pushButton_4.setText(_translate("MainWindow", "Exit"))
@@ -359,33 +428,37 @@ class Ui_MainWindow(object):
         self.action_open_ui_folder.setText(_translate("MainWindow", "for manual mode"))
         self.action_open_config_folder.setText(_translate("MainWindow", "for auto mode"))
         self.menu_open_folder.setTitle(_translate("MainWindow", "Open save folder"))
+        self.actionselect_Config_json.setText(_translate("MainWindow", "Select another config"))
         self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create new \'config.json\'"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionEnglish.setText("English")
         self.actionRussian.setText("Русский")
 
     def exception_handler(self, exc_type, exc_value, exc_traceback):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         self.message_with_timestamp(
             f"{_translate('log_message', 'ERROR: An exception occurred')} - {exc_value}")
         # Вызываем стандартный обработчик исключений для вывода на экран
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
     def exception_handler_only_log(self, exc_type, exc_value, exc_traceback):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         timestamp = datetime.datetime.now().strftime("[%d-%m-%y %H-%M-%S]")
         self.write_to_log_file(
             f"{timestamp} {_translate('log_message', 'ERROR: An exception occurred')} - {exc_value}")
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
     def update_text_browser(self, message):
-        self.textBrowser.append(message)
-        self.textBrowser.selectAll() #выделяем весь текст для корректного обновления шрифтов
-        self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
-        cursor = self.textBrowser.textCursor()
-        cursor.movePosition(cursor.End)
-        self.textBrowser.setTextCursor(cursor)
-        self.textBrowser.ensureCursorVisible()
+        try:
+            self.textBrowser.append(message)
+            self.textBrowser.selectAll() #выделяем весь текст для корректного обновления шрифтов
+            self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
+            cursor = self.textBrowser.textCursor()
+            cursor.movePosition(cursor.End)
+            self.textBrowser.setTextCursor(cursor)
+            self.textBrowser.ensureCursorVisible()
+        except Exception as e:
+            self.exception_handler_only_log(type(e), e, e.__traceback__)
 
     def write_to_log_file(self, message):
         log_file_path = get_log_file_path()
@@ -409,15 +482,15 @@ class Ui_MainWindow(object):
 
     def open_output_folder_ui(self):
         try:
-            path = self.lineEdit_2.text()
+            path = os.path.expandvars(self.lineEdit_2.text())
             os.startfile(path)
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
 
     def open_output_folder_config(self):
         try:
-            config = read_config_from_json(json_file)
-            path = config.get("destination_path")
+            config = self.read_config_select_mode()
+            path = os.path.expandvars(config.get("destination_path"))
             os.startfile(path)
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
@@ -444,7 +517,7 @@ class Ui_MainWindow(object):
             self.exception_handler(type(e), e, e.__traceback__)
 
     def open_source_path_dialog_file(self):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         try:
             options = QtWidgets.QFileDialog.Options()
             source_path, _ = QtWidgets.QFileDialog.getOpenFileName(None, _translate("path_dialog", "Select Source File"), "", _translate("path_dialog", "All Files (*)"),
@@ -456,7 +529,7 @@ class Ui_MainWindow(object):
             self.exception_handler(type(e), e, e.__traceback__)
 
     def open_source_path_dialog_folder(self):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         try:
             options = QtWidgets.QFileDialog.Options()
             source_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog", "Select Source Path"), "", options=options)
@@ -467,7 +540,7 @@ class Ui_MainWindow(object):
             self.exception_handler(type(e), e, e.__traceback__)
 
     def open_destination_path_dialog(self):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         try:
             options = QtWidgets.QFileDialog.Options()
             destination_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog", "Select Destination Path"), "",
@@ -482,7 +555,7 @@ class Ui_MainWindow(object):
         self.stop_copying()
         time.sleep(1)
         self.copy_thread_stop_event = threading.Event()
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
 
         try:
             source_path = self.validate_path_source_for_ui(self.lineEdit.text())
@@ -522,7 +595,7 @@ class Ui_MainWindow(object):
         copies_info = {}  # Словарь для хранения информации о сделанных копиях
         copy_count = 1
         delete_copy_count = 1
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
 
         try:
             while not stop_event.is_set():
@@ -570,7 +643,7 @@ class Ui_MainWindow(object):
         copies_info = {}  # Словарь для хранения информации о сделанных копиях
         copy_count = 1
         delete_copy_count = 1
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
 
         try:
             while True:
@@ -614,7 +687,7 @@ class Ui_MainWindow(object):
 
 
     def validate_path_source_for_ui(self, path):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         try:
             if not isinstance(path, str):
                 self.message_with_timestamp(
@@ -639,7 +712,7 @@ class Ui_MainWindow(object):
             self.exception_handler(type(e), e, e.__traceback__)
 
     def validate_path_destination_for_ui(self, path, source_path):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         try:
             if not isinstance(path, str):
                 self.message_with_timestamp(
@@ -662,7 +735,7 @@ class Ui_MainWindow(object):
             self.exception_handler(type(e), e, e.__traceback__)
 
     def validate_positive_integer_for_ui(self, value, param_name):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         try:
             value = int(value)
             if value > 0:
@@ -679,8 +752,8 @@ class Ui_MainWindow(object):
     def copy_is_auto(self):
         try:
             self.copy_thread_stop_event = threading.Event()
-            config = read_config_from_json(json_file)
-            _translate = read_config_translate()
+            config = self.read_config_select_mode()
+            _translate = self.read_config_translate()
 
             if config:
                 silence_mode = config.get("silence_mode")
@@ -712,12 +785,12 @@ class Ui_MainWindow(object):
                         f"{_translate('log_message', 'Error: The configuration file contains an invalid data format. Correct the configuration file or enter the parameters manually.')}")
             else:
                 self.message_with_timestamp(
-                    f"{_translate('log_message', 'Error: config file not found')}")
+                    f"{_translate('log_message', 'Error: config file not found or contains an invalid data format')}")
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
 
     def validate_path_source_for_silence(self, path):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         timestamp = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
         try:
             if not isinstance(path, str):
@@ -755,7 +828,7 @@ class Ui_MainWindow(object):
             os._exit(1)
 
     def validate_path_destination_for_silence(self, path, source_path):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         timestamp = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
         try:
             if not isinstance(path, str):
@@ -794,7 +867,7 @@ class Ui_MainWindow(object):
             os._exit(1)
 
     def validate_positive_integer_for_silence(self, value, param_name):
-        _translate = read_config_translate()
+        _translate = self.read_config_translate()
         timestamp = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
         try:
             value = int(value)
@@ -821,8 +894,8 @@ class Ui_MainWindow(object):
     def copy_is_silence(self):
         try:
             self.copy_thread_stop_event = threading.Event()
-            config = read_config_from_json(json_file)
-            _translate = read_config_translate()
+            config = self.read_config_select_mode()
+            _translate = self.read_config_translate()
             timestamp = datetime.datetime.now().strftime("%d-%m-%y %H-%M-%S")
 
             if config:
@@ -864,15 +937,15 @@ class Ui_MainWindow(object):
 class AppMainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        _translate = read_config_translate()
         self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        _translate = self.ui.read_config_translate()
 
         if config:
             silence_mode = config.get("silence_mode")
             if silence_mode == True:
                 self.ui.copy_is_silence()
             elif silence_mode == False:
-                self.ui.setupUi(self)
                 self.show()
 
                 lang = config.get("language")
@@ -883,7 +956,6 @@ class AppMainWindow(QtWidgets.QMainWindow):
                     self.ui.actionEnglish.setChecked(True)
                     self.ui.actionRussian.setChecked(False)
             else:
-                self.ui.setupUi(self)
                 self.show()
                 self.ui.message_with_timestamp(
                     f"{_translate('log_message', 'Error: The configuration file contains an invalid data format. You can continue manually.')}")
