@@ -1,4 +1,4 @@
-#1.4.2
+#1.4.3
 import os
 import shutil
 import time
@@ -89,7 +89,7 @@ class TranslationProvider:
                 "    Number of copies to keep:": "    Количество хранимых копий:",
                 "Error: invalid input. Repeat request.": "Ошибка: неправильный ввод. Повторите запрос.",
                 "Error: The configuration file contains an invalid data format. You can continue manually.": "Ошибка: файл конфигурации содержит неверный формат данных. Вы можете продолжить в ручном режиме.",
-                "New 'config.json' created": "Создан новый 'config.json'",
+                "Created a new 'config.json' with the following options:": "Создан новый 'config.json' со следующими параметрами:",
                 "Error: config file not found or contains an invalid data format": "Ошибка: файл конфигурации не найден или содержит неверный формат данных.",
                 "ERROR: An exception occurred": "ОШИБКА: Произошло исключение",
                 "Error: The path to the source cannot be the same as the path to save": "Ошибка: Путь до источника не может совпадать с путём для сохранения",
@@ -359,7 +359,9 @@ class Ui_MainWindow(object):
                 "max_copies": max_copies
             }
             self.create_config_file(config_data)
-            self.message_with_timestamp(_translate("log_message", "New 'config.json' created"))
+            self.message_with_timestamp_nn(_translate("log_message", "Created a new 'config.json' with the following options:"))
+            for key, value in config_data.items():
+                self.message(f"    {key}: {value}")
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
 
@@ -410,7 +412,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = self.read_config_translate()
-        MainWindow.setWindowTitle("cladoup files v1.4.2")
+        MainWindow.setWindowTitle("cladoup files v1.4.3")
         self.pushButton_2.setText(_translate("MainWindow", "Auto"))
         self.pushButton_3.setText(_translate("MainWindow", "Start"))
         self.pushButton_4.setText(_translate("MainWindow", "Exit"))
