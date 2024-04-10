@@ -1,4 +1,4 @@
-#1.4.3
+#1.5.4
 import os
 import shutil
 import time
@@ -44,13 +44,15 @@ class TranslationProvider:
                 "Select Config File": "Выберите конфиг файл",
                 "JSON Files (*.json)": "JSON-файл (*.json)",
                 "Create new \'config.json\'": "Создать новый \'config.json\'",
+                "Save current config": "Сохранить текущий конфиг",
                 "About": "О программе"
             },
             "path_dialog": {
                 "Select Source File": "Выберите файл для копирования",
                 "All Files (*)": "Все файлы (*)",
                 "Select Source Path":  "Выберите папку для копирования",
-                "Select Destination Path": "Выберите путь для сохранения:"
+                "Select Destination Path": "Выберите путь для сохранения:",
+                "Save as": "Сохранить как"
             },
             "log_message": {
                 "Removed copy": "Удалены копия",
@@ -89,7 +91,9 @@ class TranslationProvider:
                 "    Number of copies to keep:": "    Количество хранимых копий:",
                 "Error: invalid input. Repeat request.": "Ошибка: неправильный ввод. Повторите запрос.",
                 "Error: The configuration file contains an invalid data format. You can continue manually.": "Ошибка: файл конфигурации содержит неверный формат данных. Вы можете продолжить в ручном режиме.",
-                "Created a new 'config.json' with the following options:": "Создан новый 'config.json' со следующими параметрами:",
+                "Created a new 'config.json' ": "Создан новый 'config.json' ",
+                "Selected 'config.json' ": "Выбран 'config.json' ",
+                "with the following options:": "со следующими параметрами:",
                 "Error: config file not found or contains an invalid data format": "Ошибка: файл конфигурации не найден или содержит неверный формат данных.",
                 "ERROR: An exception occurred": "ОШИБКА: Произошло исключение",
                 "Error: The path to the source cannot be the same as the path to save": "Ошибка: Путь до источника не может совпадать с путём для сохранения",
@@ -265,6 +269,9 @@ class Ui_MainWindow(object):
         self.actionCreate_New_Config_json = QtWidgets.QAction(MainWindow)
         self.actionCreate_New_Config_json.setObjectName("actionCreate_New_Config_json")
         self.actionCreate_New_Config_json.triggered.connect(lambda: self.create_new_config())
+        self.actionSave_cur_Config_json = QtWidgets.QAction(MainWindow)
+        self.actionSave_cur_Config_json.setObjectName("actionSave_cur_Config_json")
+        self.actionSave_cur_Config_json.triggered.connect(lambda: self.save_cur_config())
         self.actionselect_Config_json = QtWidgets.QAction(MainWindow)
         self.actionselect_Config_json.setObjectName("action_select_Config_json")
         self.actionselect_Config_json.triggered.connect(self.open_config_select_dialog)
@@ -274,8 +281,6 @@ class Ui_MainWindow(object):
         self.action_open_config_folder = QtWidgets.QAction(MainWindow)
         self.action_open_config_folder.setObjectName("action_open_config_folder")
         self.action_open_config_folder.triggered.connect(self.open_output_folder_config)
-        self.actionAbout = QtWidgets.QAction(MainWindow)
-        self.actionAbout.setObjectName("actionAbout")
         self.actionEnglish = QtWidgets.QAction(MainWindow)
         self.actionEnglish.setCheckable(True)
         self.actionEnglish.setObjectName("actionEnglish")
@@ -288,6 +293,8 @@ class Ui_MainWindow(object):
         self.menu_open_folder.addAction(self.action_open_ui_folder)
         self.menu_open_folder.addAction(self.action_open_config_folder)
         self.menuSettings.addAction(self.actionCreate_New_Config_json)
+        self.menuSettings.addAction(self.actionSave_cur_Config_json)
+        self.menuSettings.addSeparator()   
         self.menuSettings.addAction(self.actionselect_Config_json)
         self.menuSettings.addSeparator()
         self.menuSettings.addAction(self.menu_open_folder.menuAction())
@@ -295,10 +302,7 @@ class Ui_MainWindow(object):
         self.menuLanguage.addAction(self.actionEnglish)
         self.menuLanguage.addAction(self.actionRussian)
         self.menuSettings.addAction(self.menuLanguage.menuAction())
-        self.menuSettings.addSeparator()
-        self.menuSettings.addAction(self.actionAbout)
         self.menuBar.addAction(self.menuSettings.menuAction())
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -322,6 +326,13 @@ class Ui_MainWindow(object):
             )
             if config_path:
                 self.lineEdit_3.setText(config_path)
+                path = self.lineEdit_3.text()
+                config = read_config_from_json(path)
+                self.message_with_timestamp_nn(
+                    _translate("log_message", "Selected 'config.json' ") + _translate("log_message", "with the following options:"))
+                for key, value in config.items():
+                    self.message(f"    {key}: {value}")
+
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
 
@@ -345,6 +356,49 @@ class Ui_MainWindow(object):
 
         try:
             language = self.lineEdit_4.text()
+            
+            config_data = {
+                "silence_mode": False,
+                "language": language,
+                "source_path": "C://",
+                "destination_path": "C://",
+                "interval": 300,
+                "max_copies": 10
+            }
+            self.create_config_file(config_data)
+            self.message_with_timestamp_nn(_translate("log_message", "Created a new 'config.json' ") + _translate("log_message", "with the following options:"))
+            for key, value in config_data.items():
+                self.message(f"    {key}: {value}")
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
+    def save_cur_config_file(self, config):
+        _translate = self.read_config_translate()
+        try:
+            json_filter = _translate("MainWindow", "JSON Files (*.json)")  # Фильтр для JSON файлов
+            options = QtWidgets.QFileDialog.Options()
+            file_path = QtWidgets.QFileDialog.getSaveFileName(None, _translate("path_dialog", "Save as"), "", json_filter, options=options)
+            file_path_str = file_path[0]
+            if file_path_str:
+                # Если расширение не .json, добавляем его
+                if not file_path_str.endswith('.json'):
+                    file_path_str += '.json'
+                with open(file_path_str, "w", encoding="utf-8") as file:
+                    json.dump(config, file, ensure_ascii=False, indent=4)
+
+                self.message_with_timestamp_nn(
+                    _translate("log_message", "Created a new 'config.json' ") + _translate("log_message", "with the following options:"))
+                for key, value in config.items():
+                    self.message(f"    {key}: {value}")
+
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
+    def save_cur_config(self):
+        _translate = self.read_config_translate()
+
+        try:
+            language = self.lineEdit_4.text()
             source_path = self.lineEdit.text()
             destination_path = self.lineEdit_2.text()
             interval = self.spinBox_2.value()
@@ -358,10 +412,7 @@ class Ui_MainWindow(object):
                 "interval": interval,
                 "max_copies": max_copies
             }
-            self.create_config_file(config_data)
-            self.message_with_timestamp_nn(_translate("log_message", "Created a new 'config.json' with the following options:"))
-            for key, value in config_data.items():
-                self.message(f"    {key}: {value}")
+            self.save_cur_config_file(config_data)
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
 
@@ -412,7 +463,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = self.read_config_translate()
-        MainWindow.setWindowTitle("cladoup files v1.4.3")
+        MainWindow.setWindowTitle("cladoup files v1.5.4")
         self.pushButton_2.setText(_translate("MainWindow", "Auto"))
         self.pushButton_3.setText(_translate("MainWindow", "Start"))
         self.pushButton_4.setText(_translate("MainWindow", "Exit"))
@@ -432,7 +483,7 @@ class Ui_MainWindow(object):
         self.menu_open_folder.setTitle(_translate("MainWindow", "Open save folder"))
         self.actionselect_Config_json.setText(_translate("MainWindow", "Select another config"))
         self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create new \'config.json\'"))
-        self.actionAbout.setText(_translate("MainWindow", "About"))
+        self.actionSave_cur_Config_json.setText(_translate("MainWindow", "Save current config"))
         self.actionEnglish.setText("English")
         self.actionRussian.setText("Русский")
 
