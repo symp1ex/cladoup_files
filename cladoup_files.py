@@ -1,4 +1,4 @@
-# 1.5.10
+# 1.5.11
 import os
 import shutil
 import time
@@ -9,6 +9,9 @@ from datetime import timedelta
 import sys
 import traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
+import winshell
+from win32com.client import Dispatch
+from pathlib import Path
 
 
 def read_config_from_json(json_file):
@@ -48,7 +51,6 @@ def get_log_file_path():
     clear_logs()
     return log_file_path
 
-
 class TranslationProvider:
     def __init__(self):
         self.translations = {
@@ -74,7 +76,7 @@ class TranslationProvider:
                 "JSON Files (*.json)": "JSON-файл (*.json)",
                 "Create default config": "Создать конфиг \"по умолчанию\"",
                 "Save current config": "Сохранить текущий конфиг",
-                "About": "О программе"
+                "Autorun on Windows startup": "Автозапуск при загрузке Windows"
             },
             "path_dialog": {
                 "Select Source File": "Выберите файл для копирования",
@@ -129,7 +131,9 @@ class TranslationProvider:
                 "Error: Source folder cannot be empty:": "Ошибка: Исходная папка не может быть пустой:",
                 "Select the correct settings for copying.": "Укажите корректные параметры для копирования.",
                 "Removed old copy from": "Удалена старая копия от",
-                "Removed old copies:": "Удалено старых копий:"
+                "Removed old copies:": "Удалено старых копий:",
+                "Program removed from startup": "Программа удалена из автозапуска",
+                "The program has been added to the startup": "Программа добавлена в автозапуск",
             }
         }
 
@@ -321,6 +325,10 @@ class Ui_MainWindow(object):
         self.action_open_config_folder = QtWidgets.QAction(MainWindow)
         self.action_open_config_folder.setObjectName("action_open_config_folder")
         self.action_open_config_folder.triggered.connect(self.open_output_folder_config)
+        self.actionAutorun = QtWidgets.QAction(MainWindow)
+        self.actionAutorun.setCheckable(True)
+        self.actionAutorun.setObjectName("autorun")
+        self.actionAutorun.triggered.connect(self.manage_startup_shortcut)
         self.actionEnglish = QtWidgets.QAction(MainWindow)
         self.actionEnglish.setCheckable(True)
         self.actionEnglish.setObjectName("actionEnglish")
@@ -338,13 +346,42 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionCreate_New_Config_json)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.menu_open_folder.menuAction())
-        self.menuSettings.addSeparator()
+        self.menuSettings.addAction(self.actionAutorun)
         self.menuLanguage.addAction(self.actionEnglish)
         self.menuLanguage.addAction(self.actionRussian)
         self.menuSettings.addAction(self.menuLanguage.menuAction())
         self.menuBar.addAction(self.menuSettings.menuAction())
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+    def retranslateUi(self, MainWindow):
+        _translate = self.read_config_translate()
+        MainWindow.setWindowTitle("cladoup files v1.5.11")
+        self.pushButton_2.setText(_translate("MainWindow", "Auto"))
+        self.pushButton_3.setText(_translate("MainWindow", "Start"))
+        self.pushButton_4.setText(_translate("MainWindow", "Exit"))
+        self.pushButton_5.setText(_translate("MainWindow", "Stop"))
+        self.label.setText(_translate("MainWindow", "Interval (sec):"))
+        self.label_2.setText(_translate("MainWindow", "Num of copies:"))
+        self.label_3.setText(_translate("MainWindow", "Select the object to copy:"))
+        self.label_4.setText(_translate("MainWindow", "Select a save path:"))
+        self.toolButton_2.setText("...")
+        self.toolButton.setText("...")
+        self.checkBox.setText(_translate("MainWindow", "Silence mode"))
+        self.radioButton.setText(_translate("MainWindow", "Select folder as object"))
+        self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
+        self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
+        self.action_open_ui_folder.setText(_translate("MainWindow", "for 'UI'"))
+        self.action_open_config_folder.setText(_translate("MainWindow", "for config"))
+        self.menu_open_folder.setTitle(_translate("MainWindow", "Open save folder"))
+        self.actionselect_Config_json.setText(_translate("MainWindow", "Select another config"))
+        self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create default config"))
+        self.actionSave_cur_Config_json.setText(_translate("MainWindow", "Save current config"))
+        self.actionAutorun.setText(_translate("MainWindow", "Autorun on Windows startup"))
+        self.actionEnglish.setText("English")
+        self.actionRussian.setText("Русский")
 
     def hide_main_window(self):
         self.MainWindow.hide()
@@ -507,32 +544,37 @@ class Ui_MainWindow(object):
         except Exception as e:
             self.exception_handler(type(e), e, e.__traceback__)
 
-    def retranslateUi(self, MainWindow):
-        _translate = self.read_config_translate()
-        MainWindow.setWindowTitle("cladoup files v1.5.10")
-        self.pushButton_2.setText(_translate("MainWindow", "Auto"))
-        self.pushButton_3.setText(_translate("MainWindow", "Start"))
-        self.pushButton_4.setText(_translate("MainWindow", "Exit"))
-        self.pushButton_5.setText(_translate("MainWindow", "Stop"))
-        self.label.setText(_translate("MainWindow", "Interval (sec):"))
-        self.label_2.setText(_translate("MainWindow", "Num of copies:"))
-        self.label_3.setText(_translate("MainWindow", "Select the object to copy:"))
-        self.label_4.setText(_translate("MainWindow", "Select a save path:"))
-        self.toolButton_2.setText("...")
-        self.toolButton.setText("...")
-        self.checkBox.setText(_translate("MainWindow", "Silence mode"))
-        self.radioButton.setText(_translate("MainWindow", "Select folder as object"))
-        self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
-        self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
-        self.action_open_ui_folder.setText(_translate("MainWindow", "for 'UI'"))
-        self.action_open_config_folder.setText(_translate("MainWindow", "for config"))
-        self.menu_open_folder.setTitle(_translate("MainWindow", "Open save folder"))
-        self.actionselect_Config_json.setText(_translate("MainWindow", "Select another config"))
-        self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create default config"))
-        self.actionSave_cur_Config_json.setText(_translate("MainWindow", "Save current config"))
-        self.actionEnglish.setText("English")
-        self.actionRussian.setText("Русский")
+    def get_path_lnk(self):
+        try:
+            exe_path = "cladoup_files.exe"
+            exe_full_path = str(Path(exe_path).resolve())
+            # Получаем путь к общедоступной папке автозагрузки
+            startup_dir = winshell.startup(common=False)
+            shortcut_path = Path(startup_dir) / (Path(exe_path).stem + ".lnk")
+            return shortcut_path, exe_full_path
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
+
+    def manage_startup_shortcut(self):
+        try:
+            _translate = self.read_config_translate()
+            shortcut_path, exe_full_path = self.get_path_lnk()
+            shell = Dispatch('WScript.Shell')
+
+            if shortcut_path.exists():
+                # Удаляем ярлык, если он существует
+                os.remove(shortcut_path)
+                self.message_with_timestamp(_translate("log_message", "Program removed from startup"))
+            else:
+                # Создаем ярлык, если его нет
+                shortcut = shell.CreateShortCut(str(shortcut_path))
+                shortcut.TargetPath = exe_full_path
+                shortcut.WorkingDirectory = str(Path(exe_full_path).parent)
+                shortcut.IconLocation = exe_full_path
+                shortcut.save()
+                self.message_with_timestamp(_translate("log_message", "The program has been added to the startup"))
+        except Exception as e:
+            self.exception_handler(type(e), e, e.__traceback__)
 
     def exception_handler(self, exc_type, exc_value, exc_traceback):
         _translate = self.read_config_translate()
@@ -1160,6 +1202,14 @@ class AppMainWindow(QtWidgets.QMainWindow):
         _translate = self.ui.read_config_translate()
 
         try:
+            shortcut_path, exe_full_path = self.ui.get_path_lnk()
+            shell = Dispatch('WScript.Shell')
+
+            if shortcut_path.exists():
+                self.ui.actionAutorun.setChecked(True)
+            else:
+                self.ui.actionAutorun.setChecked(False)
+
             if config:
                 silence_mode = config.get("silence_mode")
                 if silence_mode == True:
