@@ -14,7 +14,7 @@ When the number of copies made reaches the value specified in "max_copies", the 
 Allows saving configs to separate files and selecting them for use.
 
 Works in two modes:
-1. Parameters for copying can be registered in the console window. Paths entered manually in the console window are separated by '\'.
+1. Parameters for copying can be registered in the UI window. Paths entered manually in the UI window are separated by '\'.
 2. Can be loaded from config.json. The paths specified in config.json must be separated by '\\'. 
 If '"silence_mode": true' in config.json, then the program runs in the background and the start of the copy process does not require additional confirmation from the user after starting the program, and all output occurs in log.txt.
 
@@ -41,7 +41,7 @@ If you run several parallel processes of copying different files, then it is bet
 Позволяет сохранять конфиги в отдельные файлы и выбирать их для использования.
 
 Работает в двух режимах:
-1. Параметры для копирования можно прописать в окне консоли. Пути прописанные вручную в окне консоли разделяются через "\".
+1. Параметры для копирования можно прописать в окне интерфейса. Пути прописанные вручную в окне интерфейса разделяются через "\".
 2. Можно подргрузить из config.json. Пути указанные в config.json обязательно разделяются через "\\". Если в config.json "silence_mode": true, то программа запускается в фоновом режиме и запуск процесса копирования не требует дополнительных подтверждений от пользователя после запуска программы, а весь вывод происходит в log.txt.
 
 Если запускаете несколько параллельных процессов копирования разных файлов, то лучше по пути сохранения указывать папки с разными именами, во избежание ошибок связанных с созданием внутри папок с одинаковыми именами в виде текущей метки времени.
