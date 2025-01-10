@@ -57,7 +57,7 @@ def change_language(ui, lang):
 
         if config:
             config["language"] = lang
-            configtools.create_config_file(config)
+            configtools.write_config_file(config)
         else:
             configtools.create_new_config(ui)
 

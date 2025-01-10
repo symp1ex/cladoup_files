@@ -1,8 +1,9 @@
 {
     "silence_mode": false,
     "language": "en",
+    "logs_days": 14,
     "source_path": "C:\\",
-    "destination_path": "D:\\",
-    "interval": 600,
-    "max_copies": 5
+    "destination_path": "C:\\",
+    "interval": 300,
+    "max_copies": 10
 }

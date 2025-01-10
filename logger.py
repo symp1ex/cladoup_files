@@ -7,11 +7,19 @@ import configtools
 not_interface_exists = False  # ставим флаг на отсутствие интерфейса
 
 def clear_logs():
+    json_file = os.path.join(os.getcwd(), "config.json")
+    config = configtools.read_config_from_json(json_file)
+
+    try:
+        logs_days = config.get("logs_days", int(14))
+    except AttributeError:
+        logs_days = 14
+
     try:
         # Получаем текущую дату
         current_date = datetime.datetime.now()
         # Определяем дату, старше которой логи будут удаляться
-        old_date_limit = current_date - datetime.timedelta(days=30)
+        old_date_limit = current_date - datetime.timedelta(days=logs_days)
         # Удаляем логи старше 30 дней
         for file_name in os.listdir("logs"):
             file_path = os.path.join("logs", file_name)

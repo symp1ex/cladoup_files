@@ -26,7 +26,7 @@ def read_config_from_json(json_file):
     except json.JSONDecodeError:
         return None
 
-def create_config_file(config, file_path="config.json"):
+def write_config_file(config, file_path="config.json"):
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(config, file, ensure_ascii=False, indent=4)
 
@@ -41,12 +41,13 @@ def create_new_config(ui):
         config_data = {
             "silence_mode": False,
             "language": language,
+            "logs_days": 14,
             "source_path": "C:\\",
             "destination_path": "C:\\",
             "interval": 300,
             "max_copies": 10
         }
-        create_config_file(config_data)
+        write_config_file(config_data)
         message_with_timestamp_nn(ui, _translate("log_message", "Created a new 'config.json' ") + _translate("log_message", "with the following options:"))
         for key, value in config_data.items():
             message(ui, f"    {key}: {value}")
