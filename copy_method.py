@@ -7,22 +7,32 @@ import configtools
 import logger
 
 def get_copy_data_to_config(ui):
-    config = configtools.read_config_select_mode(ui)
+    _translate = configtools.read_config_translate()
+    try:
+        config = configtools.read_config_select_mode(ui)
 
-    source_path = validate_path_source(ui, config.get("source_path"))
-    if source_path:
-        destination_path = validate_path_destination(ui, config.get("destination_path"), source_path)
-    interval = validate_positive_integer(ui, config.get("interval"), "interval")
-    max_copies = validate_positive_integer(ui, config.get("max_copies"), "max_copies")
-    return source_path, destination_path, interval, max_copies
+        source_path = validate_path_source(ui, config.get("source_path"))
+        if source_path:
+            destination_path = validate_path_destination(ui, config.get("destination_path"), source_path)
+        interval = validate_positive_integer(ui, config.get("interval"), "interval")
+        max_copies = validate_positive_integer(ui, config.get("max_copies"), "max_copies")
+        return source_path, destination_path, interval, max_copies
+    except Exception as e:
+        logger.exception_handler(ui, type(e), e, e.__traceback__)
+        if logger.not_interface_exists:
+            logger.message_with_timestamp(ui, _translate('log_message', 'The program has been stopped.'))
+            os._exit(1)
 
 def get_copy_data_to_ui(ui):
-    source_path = validate_path_source(ui, ui.lineEdit.text())
-    if source_path:
-        destination_path = validate_path_destination(ui, ui.lineEdit_2.text(), source_path)
-    interval = validate_positive_integer(ui, ui.spinBox_2.value(), "interval")
-    max_copies = validate_positive_integer(ui, ui.spinBox.value(), "max_copies")
-    return source_path, destination_path, interval, max_copies
+    try:
+        source_path = validate_path_source(ui, ui.lineEdit.text())
+        if source_path:
+            destination_path = validate_path_destination(ui, ui.lineEdit_2.text(), source_path)
+        interval = validate_positive_integer(ui, ui.spinBox_2.value(), "interval")
+        max_copies = validate_positive_integer(ui, ui.spinBox.value(), "max_copies")
+        return source_path, destination_path, interval, max_copies
+    except Exception as e:
+        logger.exception_handler(ui, type(e), e, e.__traceback__)
 
 def start_copy(ui, source_path, destination_path, interval, max_copies):
     ui.stop_copying_and_clean()
@@ -46,13 +56,16 @@ def start_copy(ui, source_path, destination_path, interval, max_copies):
             cleanup_folders_in_thread(ui, destination_path, interval, max_copies)
             copy_thread = threading.Thread(target=copy_files,
                                            args=(ui, source_path, destination_path, interval, max_copies,
-                                                 ui.copy_thread_stop_event))
+                                                 ui.copy_thread_stop_event), daemon=True)
             copy_thread.start()
         else:
             logger.message_with_timestamp(ui,
                                           f"{_translate('log_message', 'Select the correct settings for copying.')}")
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
+        if logger.not_interface_exists:
+            logger.message_with_timestamp(ui, _translate('log_message', 'The program has been stopped.'))
+            os._exit(1)
 
 def copy_files(ui, source_path, destination_path, interval, max_copies, stop_event):
     copies_info = {}  # Словарь для хранения информации о сделанных копиях
@@ -88,7 +101,6 @@ def copy_files(ui, source_path, destination_path, interval, max_copies, stop_eve
                         source_file = os.path.join(root, file)
                         destination_file = os.path.join(destination_dir, file)
                         shutil.copy2(source_file, destination_file)
-
             logger.message_with_timestamp(ui, f"{_translate('log_message', 'Copy created')} {copy_count} {_translate('log_message', 'to a folder:')} '{copy_folder_path}'")
             copy_count += 1
             time.sleep(0.1)
@@ -201,8 +213,8 @@ def is_valid_folder_name(folder_name, date_format):
         return False
 
 def cleanup_folders(ui, folder_path, target_count, interval_seconds, stop_event):
+    _translate = configtools.read_config_translate()
     try:
-        _translate = configtools.read_config_translate()
         # Получаем список папок в указанной директории
         folders = os.listdir(folder_path)
 
@@ -260,14 +272,21 @@ def cleanup_folders(ui, folder_path, target_count, interval_seconds, stop_event)
                 break
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
+        if logger.not_interface_exists:
+            logger.message_with_timestamp(ui, _translate('log_message', 'The program has been stopped.'))
+            os._exit(1)
 
 def cleanup_folders_in_thread(ui, folder_path, interval_seconds, target_count):
+    _translate = configtools.read_config_translate()
     try:
         ui.delete_thread_stop_event = threading.Event()
         # Создаем новый поток и передаем в него функцию cleanup_folders
         cleanup_thread = threading.Thread(target=cleanup_folders, args=(ui, folder_path, target_count, interval_seconds,
-                                                                        ui.delete_thread_stop_event))
+                                                                        ui.delete_thread_stop_event), daemon=True)
         # Запускаем поток
         cleanup_thread.start()
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
+        if logger.not_interface_exists:
+            logger.message_with_timestamp(ui, _translate('log_message', 'The program has been stopped.'))
+            os._exit(1)

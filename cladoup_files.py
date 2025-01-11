@@ -1,4 +1,3 @@
-# 2.0.2
 import os
 import time
 import threading
@@ -9,6 +8,7 @@ import logger
 import settingsbar
 import filebar
 import copy_method
+import about
 
 
 class Ui_MainWindow(object):
@@ -249,7 +249,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = configtools.read_config_translate()
-        MainWindow.setWindowTitle("cladoup files v2.0.3")
+        MainWindow.setWindowTitle(about.version)
         self.pushButton_2.setText(_translate("MainWindow", "Auto"))
         self.pushButton_3.setText(_translate("MainWindow", "Start"))
         self.pushButton_4.setText(_translate("MainWindow", "Exit"))

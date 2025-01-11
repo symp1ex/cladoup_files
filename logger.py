@@ -70,15 +70,6 @@ def exception_handler(ui, exc_type, exc_value, exc_traceback):
     # Вызываем стандартный обработчик исключений для вывода на экран
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
-def exception_handler_only_log(exc_type, exc_value, exc_traceback):
-    _translate = configtools.read_config_translate()
-    timestamp = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S.%f")[:-3] + "]"
-    error_message = f"{_translate('log_message', 'ERROR: An exception occurred')}\n"
-    error_message += ''.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
-    write_to_log_file(
-        f"{timestamp} {error_message}")
-    sys.__excepthook__(exc_type, exc_value, exc_traceback)
-
 def update_text_browser(ui, message):
     try:
         ui.textBrowser.append(message)
@@ -89,4 +80,4 @@ def update_text_browser(ui, message):
         ui.textBrowser.setTextCursor(cursor)
         ui.textBrowser.ensureCursorVisible()
     except Exception as e:
-        exception_handler_only_log(type(e), e, e.__traceback__)
+        exception_handler(type(e), e, e.__traceback__)
