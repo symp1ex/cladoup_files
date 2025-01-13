@@ -3,15 +3,13 @@ import os
 import configtools
 import logger
 
-def open_config_select_dialog(ui):
+def open_config_select_dialog(ui, root_directory):
     _translate = configtools.read_config_translate()
     try:
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.ReadOnly  # Опция "Только чтение"
 
         json_filter = _translate("MainWindow", "JSON Files (*.json)")  # Фильтр для JSON файлов
-
-        root_directory = os.path.dirname(os.path.abspath(__file__))
 
         config_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             None,
@@ -31,7 +29,7 @@ def open_config_select_dialog(ui):
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
 
-def save_cur_config(ui):
+def save_cur_config(ui, root_directory):
     json_file = os.path.join(os.getcwd(), "config.json")
     config = configtools.read_config_from_json(json_file)
     try:
@@ -55,21 +53,23 @@ def save_cur_config(ui):
             "interval": interval,
             "max_copies": max_copies
         }
-        open_dialog_save_config(ui, config_data)
+        open_dialog_save_config(ui, config_data, root_directory)
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
 
-def open_dialog_save_config(ui, config):
+def open_dialog_save_config(ui, config, root_directory):
     _translate = configtools.read_config_translate()
 
     try:
         json_filter = _translate("MainWindow", "JSON Files (*.json)")  # Фильтр для JSON файлов
 
-        root_directory = os.path.dirname(os.path.abspath(__file__))
-
         options = QtWidgets.QFileDialog.Options()
-        file_path = QtWidgets.QFileDialog.getSaveFileName(None, _translate("path_dialog", "Save as"), root_directory,
-                                                          json_filter, options=options)
+        file_path = QtWidgets.QFileDialog.getSaveFileName(
+            None,
+            _translate("path_dialog", "Save as"),
+            root_directory,
+            json_filter,
+            options=options)
         file_path_str = file_path[0]
         if file_path_str:
             # Если расширение не .json, добавляем его

@@ -15,6 +15,7 @@ class Ui_MainWindow(object):
     def __init__(self):
         self.copy_thread_stop_event = threading.Event()
         self.delete_thread_stop_event = threading.Event()
+        self.root_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     def closeEvent(self, event):
         QtWidgets.QApplication.quit()
@@ -202,11 +203,11 @@ class Ui_MainWindow(object):
 
         self.actionSave_cur_Config_json = QtWidgets.QAction(MainWindow)
         self.actionSave_cur_Config_json.setObjectName("actionSave_cur_Config_json")
-        self.actionSave_cur_Config_json.triggered.connect(lambda: filebar.save_cur_config(self))
+        self.actionSave_cur_Config_json.triggered.connect(lambda: filebar.save_cur_config(self, self.root_directory))
 
         self.actionselect_Config_json = QtWidgets.QAction(MainWindow)
         self.actionselect_Config_json.setObjectName("action_select_Config_json")
-        self.actionselect_Config_json.triggered.connect(lambda: filebar.open_config_select_dialog(self))
+        self.actionselect_Config_json.triggered.connect(lambda: filebar.open_config_select_dialog(self, self.root_directory))
 
         self.action_open_ui_folder = QtWidgets.QAction(MainWindow)
         self.action_open_ui_folder.setObjectName("action_open_ui_folder")
@@ -276,7 +277,7 @@ class Ui_MainWindow(object):
         self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create default config"))
         self.actionSave_cur_Config_json.setText(_translate("MainWindow", "Save current config"))
         self.actionAutorun.setText(_translate("MainWindow", "Autorun on Windows startup"))
-        self.action_open_settings.setText(_translate("MainWindow", "Options")) # добавить перевол
+        self.action_open_settings.setText(_translate("MainWindow", "Options"))  # добавить перевол
         self.actionEnglish.setText("English")
         self.actionRussian.setText("Русский")
 
@@ -288,11 +289,18 @@ class Ui_MainWindow(object):
         try:
             options = QtWidgets.QFileDialog.Options()
             if self.radioButton.isChecked():
-                source_path = QtWidgets.QFileDialog.getExistingDirectory(None,
-                                                                         _translate("path_dialog", "Select Source Path"),
-                                                                         "", options=options)
+                source_path = QtWidgets.QFileDialog.getExistingDirectory(
+                    None,
+                    _translate("path_dialog", "Select Source Path"),
+                    "",
+                    options=options)
             else:
-                source_path, _ = QtWidgets.QFileDialog.getOpenFileName(None,_translate("path_dialog", "Select Source File"), "" ,_translate("path_dialog", "All Files (*)"), options=options)
+                source_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                    None,
+                    _translate("path_dialog", "Select Source File"),
+                    "",
+                    _translate("path_dialog", "All Files (*)"),
+                    options=options)
             if source_path:
                 source_path = source_path.replace("/", "\\")
                 self.lineEdit.setText(source_path)
@@ -303,10 +311,11 @@ class Ui_MainWindow(object):
         _translate = configtools.read_config_translate()
         try:
             options = QtWidgets.QFileDialog.Options()
-            destination_path = QtWidgets.QFileDialog.getExistingDirectory(None, _translate("path_dialog",
-                                                                                           "Select Destination Path"),
-                                                                          "",
-                                                                          options=options)
+            destination_path = QtWidgets.QFileDialog.getExistingDirectory(
+                None,
+                _translate("path_dialog", "Select Destination Path"),
+                "",
+                options=options)
             if destination_path:
                 destination_path = destination_path.replace("/", "\\")
                 self.lineEdit_2.setText(destination_path)
@@ -339,6 +348,7 @@ class Ui_MainWindow(object):
         self.stop_copying()
         self.stop_clean()
 
+
 class AppMainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -370,29 +380,28 @@ class AppMainWindow(QtWidgets.QMainWindow):
         settings_window.setWindowModality(QtCore.Qt.ApplicationModal)
         settings_window.exec_()
 
-
     def main(self):
         config = configtools.read_config_from_json("config.json")
         try:
             shortcut_path, exe_full_path = settingsbar.get_path_lnk(self.ui)
-
             if shortcut_path.exists():
                 self.ui.actionAutorun.setChecked(True)
             else:
                 self.ui.actionAutorun.setChecked(False)
-
             if config:
                 silence_mode = config.get("silence_mode")
-                if silence_mode == True:
+                if silence_mode == 1:
                     logger.not_interface_exists = True
                     source_path, destination_path, interval, max_copies = copy_method.get_copy_data_to_config(self.ui)
                     copy_method.start_copy(self.ui, source_path, destination_path, interval, max_copies)
-                elif silence_mode == False:
+                elif silence_mode == 0:
                     self.show()
                     settingsbar.set_checked_lang(self.ui, self.lang)
                 else:
                     self.show()
-                    logger.message_with_timestamp(self.ui, f"{self._translate('log_message', 'Error: The configuration file contains an invalid data format. You can continue manually.')}")
+                    logger.message_with_timestamp(
+                        self.ui,
+                        f"{self._translate('log_message', 'Error: The configuration file contains an invalid data format. You can continue manually.')}")
                     settingsbar.set_checked_lang(self.ui, self.lang)
             else:
                 self.show()
