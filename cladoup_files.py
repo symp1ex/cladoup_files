@@ -231,6 +231,9 @@ class Ui_MainWindow(object):
         self.actionEnglish.triggered.connect(lambda: settingsbar.change_language(self, "en"))
         self.actionRussian.triggered.connect(lambda: settingsbar.change_language(self, "ru"))
 
+        self.action_open_settings = QtWidgets.QAction(MainWindow)
+        self.action_open_settings.setObjectName("open_settings")
+
         self.menu_open_folder.addAction(self.action_open_ui_folder)
         self.menu_open_folder.addAction(self.action_open_config_folder)
         self.menuFile.addAction(self.actionselect_Config_json)
@@ -243,6 +246,7 @@ class Ui_MainWindow(object):
         self.menuLanguage.addAction(self.actionEnglish)
         self.menuLanguage.addAction(self.actionRussian)
         self.menuSettings.addAction(self.menuLanguage.menuAction())
+        self.menuSettings.addAction(self.action_open_settings)
         self.menuBar.addAction(self.menuSettings.menuAction())
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -272,6 +276,7 @@ class Ui_MainWindow(object):
         self.actionCreate_New_Config_json.setText(_translate("MainWindow", "Create default config"))
         self.actionSave_cur_Config_json.setText(_translate("MainWindow", "Save current config"))
         self.actionAutorun.setText(_translate("MainWindow", "Autorun on Windows startup"))
+        self.action_open_settings.setText(_translate("MainWindow", "Options")) # добавить перевол
         self.actionEnglish.setText("English")
         self.actionRussian.setText("Русский")
 
@@ -341,13 +346,33 @@ class AppMainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self._translate = configtools.read_config_translate()
 
+        self.ui.action_open_settings.triggered.connect(self.open_settings)  # Привязываем кнопку к методу open_settings
+
         try:
+            config = configtools.read_config_from_json("config.json")
             self.lang = config.get("language", "en")
         except AttributeError:
             self.lang = "en"
         self.ui.lineEdit_4.setText(self.lang)
 
+    def open_settings(self):
+        config = configtools.read_config_from_json("config.json")
+        try:
+            logs_days = config.get("logs_days", int(14))
+        except AttributeError:
+            logs_days = 14
+
+        settings_window = QtWidgets.QDialog()  # Создаем новое окно для настроек
+        settings_ui = settingsbar.ui_settings_win()  # Создаем экземпляр ui_settings_win
+
+        # Вызов окна настроек
+        settings_ui.setupui_settings(settings_window, logs_days, self.ui)  # Настраиваем интерфейс
+        settings_window.setWindowModality(QtCore.Qt.ApplicationModal)
+        settings_window.exec_()
+
+
     def main(self):
+        config = configtools.read_config_from_json("config.json")
         try:
             shortcut_path, exe_full_path = settingsbar.get_path_lnk(self.ui)
 
@@ -373,12 +398,12 @@ class AppMainWindow(QtWidgets.QMainWindow):
                 self.show()
                 settingsbar.set_checked_lang(self.ui, self.lang)
                 logger.message_with_timestamp(self.ui, f"Error: config file not found. You can continue manually.")
+                configtools.create_new_config(self.ui)
         except Exception as e:
             logger.exception_handler(self.ui, type(e), e, e.__traceback__)
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    config = configtools.read_config_from_json("config.json")
     AppMainWindow().main()
     sys.exit(app.exec_())

@@ -23,7 +23,8 @@ class TranslationProvider:
                 "JSON Files (*.json)": "JSON-файл (*.json)",
                 "Create default config": "Создать конфиг \"по умолчанию\"",
                 "Save current config": "Сохранить текущий конфиг",
-                "Autorun on Windows startup": "Автозапуск при загрузке Windows"
+                "Autorun on Windows startup": "Автозапуск при загрузке Windows",
+                "Options": "Дополнительно"
             },
             "path_dialog": {
                 "Select Source File": "Выберите файл для копирования",
@@ -31,6 +32,15 @@ class TranslationProvider:
                 "Select Source Path": "Выберите папку для копирования",
                 "Select Destination Path": "Выберите путь для сохранения:",
                 "Save as": "Сохранить как"
+            },
+            "settings_win": {
+                "Settings": "Настройки",
+                "Save": "Сохранить",
+                "Cancel": "Отмена",
+                "Keep logs for": "Хранить логи",
+                "days.": "дней.",
+                "Error!": "Ошибка!",
+                "This value must be an integer.": "Это значение должно быть целым числом."
             },
             "log_message": {
                 "Removed copy": "Удалены копия",
@@ -63,6 +73,8 @@ class TranslationProvider:
                 "Removed old copies:": "Удалено старых копий:",
                 "Program removed from startup": "Программа удалена из автозапуска",
                 "The program has been added to the startup": "Программа добавлена в автозапуск",
+                "must be an integer.": "должно быть целым числом.",
+                "The value of “logs_days” has been changed to:": "Значение 'logs_days' изменено на:"
             }
         }
 

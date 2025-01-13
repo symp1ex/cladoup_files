@@ -41,7 +41,7 @@ def get_log_file_path():
 
 def write_to_log_file(message):
     log_file_path = get_log_file_path()
-    with open(log_file_path, "a", encoding="cp1251") as log_file:
+    with open(log_file_path, "a", encoding="UTF-8") as log_file:
         log_file.write(message + "\n")
 
 def message(ui, message):

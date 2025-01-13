@@ -1,12 +1,10 @@
 import json
-import os
 import translation
 
 def read_config_translate():
     translation_provider = translation.TranslationProvider()
 
-    json_file = os.path.join(os.getcwd(), "config.json")
-    config = read_config_from_json(json_file)
+    config = read_config_from_json("config.json")
 
     _translate = translation_provider.original_text
 
