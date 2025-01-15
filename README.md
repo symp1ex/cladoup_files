@@ -23,7 +23,7 @@ If you run several parallel processes of copying different files, then it is bet
 "language": "en" - English (Google Translate)
 "language": "ru" - Russian language.
 
-*To work on Windows 7, you may need to install security update KB3063858. For the 32-bit version, the offline installer is in the archive.
+*On Win7 and Embedded you may get an error message, then you will need to install security update KB3063858. (Googled by update number and Windows name, weighs 900kb. There is a separate installer for Win7 and a separate one for Embedded.
 
 
 
@@ -51,4 +51,4 @@ If you run several parallel processes of copying different files, then it is bet
 "language": "ru" - русский язык.
 "language": "en" - английский язык (Google Translate)
 
-*Для работы на Виндовс 7 может понадобиться установить обновление безопасности KB3063858. Для 32-бит версии автономный установщик лежит в архиве.
+*На Win7 и Embedded может появиться сообщение об ошибке, тогда понадобиться установка обновления безопасности KB3063858. (гуглится по номеру обновления и названию Винды, весит 900кб. Для Win7 отдельный установщик, для Embedded отдельный.
