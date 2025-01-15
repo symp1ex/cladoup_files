@@ -87,7 +87,7 @@ def copy_files(ui, source_path, destination_path, interval, max_copies, stop_eve
                 shutil.rmtree(oldest_copy_path, ignore_errors=True)
                 logger.message_with_timestamp(ui, f"{_translate('log_message', 'Removed copy')} {delete_copy_count} {_translate('log_message', 'with folder:')} '{oldest_copy_path}'")
                 delete_copy_count += 1
-                time.sleep(0.1)
+                time.sleep(0.2)
 
             if os.path.isfile(source_path):
                 # Если указан конкретный файл, копируем его
@@ -103,13 +103,10 @@ def copy_files(ui, source_path, destination_path, interval, max_copies, stop_eve
                         shutil.copy2(source_file, destination_file)
             logger.message_with_timestamp(ui, f"{_translate('log_message', 'Copy created')} {copy_count} {_translate('log_message', 'to a folder:')} '{copy_folder_path}'")
             copy_count += 1
-            time.sleep(0.1)
-            if not stop_event.wait(interval):
-                continue
-            else:
-                # запись в вывод и в лог об остановке
+            if stop_event.wait(interval):
                 logger.message_with_timestamp(ui, f"{_translate('log_message', 'The program has been stopped.')}")
                 break
+            continue
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
         if logger.not_interface_exists:
@@ -212,6 +209,17 @@ def is_valid_folder_name(folder_name, date_format):
     except ValueError:
         return False
 
+def cycle_removed_old_copy(ui, _translate, filtered_folders, folder_path, interval_seconds, stop_event):
+    try:
+        for folder in filtered_folders:
+            folder_path_full = os.path.join(folder_path, folder)
+            shutil.rmtree(folder_path_full)
+            logger.message_with_timestamp(ui, f"{_translate('log_message', 'Removed old copy from')} \'{folder}\'")
+            if stop_event.wait(interval_seconds):
+                break
+    except Exception as e:
+        logger.exception_handler(ui, type(e), e, e.__traceback__)
+
 def cleanup_folders(ui, folder_path, target_count, interval_seconds, stop_event):
     _translate = configtools.read_config_translate()
     try:
@@ -230,14 +238,7 @@ def cleanup_folders(ui, folder_path, target_count, interval_seconds, stop_event)
 
         while not stop_event.is_set():  # запускаем цикл проверки на событие установки удаления
             if folder_count == target_count:
-                # Если количество папок совпадает с целевым, удаляем папки с заданным интервалом
-                for folder in filtered_folders:
-                    folder_path_full = os.path.join(folder_path, folder)
-                    shutil.rmtree(folder_path_full)
-                    logger.message_with_timestamp(ui, f"{_translate('log_message', 'Removed old copy from')} \'{folder}\'")
-                    time.sleep(interval_seconds)
-                    if stop_event.is_set():  # выходим из цикла удаления, если поступило событие остановки
-                        break
+                cycle_removed_old_copy(ui, _translate, filtered_folders, folder_path, interval_seconds, stop_event)
                 break
             elif folder_count > target_count:
                 # Если количество папок больше целевого, удаляем лишние папки
@@ -248,27 +249,15 @@ def cleanup_folders(ui, folder_path, target_count, interval_seconds, stop_event)
                 logger.message_with_timestamp(ui, f"{_translate('log_message', 'Removed old copies:')} {folders_to_remove}")
                 # Устанавливаем начало списка папок после удаления лишних
                 filtered_folders = filtered_folders[folders_to_remove:]
-                # Удаляем оставшиеся папки с интервалом
-                for folder in filtered_folders:
-                    folder_path_full = os.path.join(folder_path, folder)
-                    shutil.rmtree(folder_path_full)
-                    logger.message_with_timestamp(ui, f"{_translate('log_message', 'Removed old copy from')} \'{folder}\'")
-                    time.sleep(interval_seconds)
-                    if stop_event.is_set():
-                        break
+                cycle_removed_old_copy(ui, _translate, filtered_folders, folder_path, interval_seconds, stop_event)
                 break
             else:
                 # Если количество папок меньше целевого, вычисляем разницу, ожидаем и начинаем удалять с интервалом
                 difference = target_count - folder_count
                 wait_time = difference * interval_seconds
-                time.sleep(wait_time)
-                for folder in filtered_folders:
-                    folder_path_full = os.path.join(folder_path, folder)
-                    shutil.rmtree(folder_path_full)
-                    logger.message_with_timestamp(ui, f"{_translate('log_message', 'Removed old copy from')} \'{folder}\'")
-                    time.sleep(interval_seconds)
-                    if stop_event.is_set():
-                        break
+                if stop_event.wait(wait_time):
+                    break
+                cycle_removed_old_copy(ui, _translate, filtered_folders, folder_path, interval_seconds, stop_event)
                 break
     except Exception as e:
         logger.exception_handler(ui, type(e), e, e.__traceback__)
