@@ -176,9 +176,6 @@ class Ui_MainWindow(object):
         self.checkBox.raise_()
 
         MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 522, 21))
         self.menuBar.setObjectName("menuBar")
@@ -388,6 +385,7 @@ class AppMainWindow(QtWidgets.QMainWindow):
                 self.ui.actionAutorun.setChecked(True)
             else:
                 self.ui.actionAutorun.setChecked(False)
+
             if config:
                 silence_mode = config.get("silence_mode")
                 if silence_mode == 1:

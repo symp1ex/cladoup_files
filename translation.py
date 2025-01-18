@@ -51,22 +51,27 @@ class TranslationProvider:
                 "Error: The specified path does not exist:": "Ошибка: указанный путь не существует:",
                 "Error: value": "Ошибка: значение",
                 "is not a valid path.": "не является допустимым путем.",
-                "You can continue to work manually or fix the configuration file.": "Вы можете продолжить работу в ручном режиме или исправить файл конфигурации.",
+                "You can continue to work manually or fix the configuration file.":
+                    "Вы можете продолжить работу в ручном режиме или исправить файл конфигурации.",
                 "Error:": "Ошибка:",
                 "must be a positive number.": "должно быть положительным числом.",
-                "Found configuration file. Copying will be performed according to the following parameters:": "Найден файл конфигурации. Копирование будет выполнено по следующим параметрам:",
-                "Copying will be performed with the following parameters: ": "Кoпирование будет произведено со следующими параметрами: ",
+                "Found configuration file. Copying will be performed according to the following parameters:":
+                    "Найден файл конфигурации. Копирование будет выполнено по следующим параметрам:",
+                "Copying will be performed with the following parameters: ":
+                    "Кoпирование будет произведено со следующими параметрами: ",
                 "    Source path:": "    Исходный путь:",
                 "    Path to save copy:": "    Путь для сохранения копии:",
                 "    Copy Interval:": "    Интервал копирования:",
                 "sec.": "сек.",
                 "    Number of copies to keep:": "    Количество хранимых копий:",
-                "Error: The configuration file contains an invalid data format. You can continue manually.": "Ошибка: файл конфигурации содержит неверный формат данных. Вы можете продолжить в ручном режиме.",
+                "Error: The configuration file contains an invalid data format. You can continue manually.":
+                    "Ошибка: файл конфигурации содержит неверный формат данных. Вы можете продолжить в ручном режиме.",
                 "Created a new 'config.json' ": "Создан новый 'config.json' ",
                 "Selected 'config.json' ": "Выбран 'config.json' ",
                 "with the following options:": "со следующими параметрами:",
                 "ERROR: An exception occurred": "ОШИБКА: Произошло исключение",
-                "Error: The path to the source cannot be the same as the path to save": "Ошибка: Путь до источника не может совпадать с путём для сохранения",
+                "Error: The path to the source cannot be the same as the path to save":
+                    "Ошибка: Путь до источника не может совпадать с путём для сохранения",
                 "Error: Source folder cannot be empty:": "Ошибка: Исходная папка не может быть пустой:",
                 "Select the correct settings for copying.": "Укажите корректные параметры для копирования.",
                 "Removed old copy from": "Удалена старая копия от",
@@ -74,7 +79,8 @@ class TranslationProvider:
                 "Program removed from startup": "Программа удалена из автозапуска",
                 "The program has been added to the startup": "Программа добавлена в автозапуск",
                 "must be an integer.": "должно быть целым числом.",
-                "The value of “logs_days” has been changed to:": "Значение 'logs_days' изменено на:"
+                "The value of “logs_days” has been changed to:": "Значение 'logs_days' изменено на:",
+                "Unable to make a copy due to missing source file, next attempt will be made via": "Невозможно сделать копию из-за отсутсвия исходного файла, следущая попытка будет выполнена через"
             }
         }
 
